@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ReadLogpFile.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TemperatureLogFileDropDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%userprofile%\Documents\Mijn Frigo Temperaturen</Value>
+    </Setting>
+    <Setting Name="TemperatureLogFileProcessedDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%userprofile%\Documents\Mijn Frigo Temperaturen\Verwerkt</Value>
+    </Setting>
+    <Setting Name="MailHost" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">send.one.com</Value>
+    </Setting>
+    <Setting Name="MailUserName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">sigrid@apotheeksaelens.be</Value>
+    </Setting>
+    <Setting Name="MailPassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">kippetje</Value>
+    </Setting>
+    <Setting Name="MailPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">465</Value>
+    </Setting>
+    <Setting Name="TemperatureLogDatabase" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\programdata\ApotheekSaelens\Temperaturen\Temperaturen.db</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
