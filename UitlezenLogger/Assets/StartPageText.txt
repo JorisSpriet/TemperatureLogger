@@ -1,0 +1,7 @@
+﻿Doorloop de stappen met behulp van de "Volgende" knoppen.
+
+Voer de instructies nauwgezet uit.
+
+Na uitvoering van alle stappen zal de data van temperatuurlogger geregistreerd zijn.
+
+Vervolgens kunnen rapporten voor tijdperiodes gemaakt worden met de rapporteer toepassing.

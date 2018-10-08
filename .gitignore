@@ -8,6 +8,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.snk
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -328,3 +329,12 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+/Common/Binaries/de
+/Common/Binaries
+/DataCenter/Binaries
+/DataCenter/Plugin.VisorSensors/Binaries
+/DMS/binaries
+/DomainLevelServices/Binaries
+/LMS/Binaries
+/MES/Binaries
+/WMS/Binaries

@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="TemperatuurLogger.ImportFromLoggerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TemperatuurLogger"
+             mc:Ignorable="d" 
+             d:DesignHeight="356" d:DesignWidth="446"
+             d:DataContext="{d:DesignInstance d:IsDesignTimeCreatable=False,  Type=local:IImportFromLoggerPresenter}">
+    
+    <UserControl.Resources>
+        <local:EnumToEnabledConverter x:Key="EnumToEnabledConverter"/>
+        <local:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
+        <BitmapImage x:Key="ReaderImage" UriSource="/dl-usb-t.png" />
+    </UserControl.Resources>
+    
+    <Grid>
+          <Grid.RowDefinitions>
+              <RowDefinition />
+              <RowDefinition />
+              <RowDefinition />
+              <RowDefinition />
+              <RowDefinition />
+            <RowDefinition Height="2*"/>
+              <RowDefinition Height="25"/>
+          </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Image Grid.Row="1" Grid.RowSpan="4" Grid.Column="0" Source="{StaticResource ReaderImage}" />
+        
+        <StackPanel Name="ConnectingPanel" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Stretch" >
+            <Label Content="{Binding State}"></Label>    
+            <Label VerticalAlignment="Center">1. Connecteer de lezer</Label>
+            <ProgressBar IsIndeterminate="True" HorizontalAlignment="Right" Width="100" Margin="5 15 5 15" >
+                <ProgressBar.Visibility>
+                    <Binding Path="State"  Converter="{StaticResource EnumToVisibilityConverter}">
+                        <Binding.ConverterParameter>NotConnectedNoComPort,NotConnectedSearching</Binding.ConverterParameter>
+                    </Binding>
+                </ProgressBar.Visibility>
+            </ProgressBar>
+        </StackPanel>
+
+        <StackPanel Name="GettingInfoPanel" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" MinHeight="200">
+        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Stretch" >
+            <Label VerticalAlignment="Center">2. Uitlezen informatie</Label>
+            <!--<ProgressBar IsIndeterminate="True" Width="100" Margin="5 15 5 15"/>-->
+            
+            </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+            
+            <Label Grid.Row="0" Grid.Column="1">Serienummer:</Label>
+            <Label Grid.Row="1" Grid.Column="1">Omschrijving:</Label>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Name="ConfirmDownloadPanel" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Stretch">
+            <Label VerticalAlignment="Center">3. Downloaden temperaturen</Label>
+            <Button Content="Start" Margin="5 5 0 5" Height="25" Width="75" Click="Button_Click" 
+                    IsEnabled="{Binding Path=State, Converter={StaticResource EnumToEnabledConverter}, ConverterParameter={x:Static local:ImportLoggerState.ConnectedReady}}"/>
+        </StackPanel>
+        
+        <StackPanel Name="DownloadingPanel" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Vertical" HorizontalAlignment="Stretch">
+            <Label VerticalAlignment="Center">4. Bezig met downloaden temperaturen</Label>
+            <ProgressBar IsIndeterminate="False" HorizontalAlignment="Stretch" Height="15" 
+                         Visibility="{Binding Path=State, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter={x:Static local:ImportLoggerState.ConnectedDownloading}}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

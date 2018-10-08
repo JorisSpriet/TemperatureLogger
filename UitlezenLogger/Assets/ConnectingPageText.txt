@@ -1,0 +1,1 @@
+﻿Haal de logger uit de koelkast, en stop deze in de onderste USB poort vooraan de server.
