@@ -1,6 +1,6 @@
 ﻿using System.IO.Ports;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	public static class SerialPortExtensions
 	{

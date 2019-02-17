@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public class FileLogItem

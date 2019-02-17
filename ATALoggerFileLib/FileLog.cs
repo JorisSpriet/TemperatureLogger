@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	public class FileLog
 	{

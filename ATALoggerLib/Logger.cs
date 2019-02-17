@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	public class Logger : IDisposable, ILogger
 	{

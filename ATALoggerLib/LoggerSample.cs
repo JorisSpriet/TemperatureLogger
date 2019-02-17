@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	public class LoggerSample
 	{

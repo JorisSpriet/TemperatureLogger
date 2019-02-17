@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct FileLogHeader
@@ -37,7 +37,7 @@ namespace ATALoggerLib
 		//
 
 		//[FieldOffset(29)] 
-		public int LogsAmount;
+		public int LogItemCount;
 
 		//[FieldOffset(33)] 
 		public int Reserved1; //0x00000001

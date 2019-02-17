@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
 	public struct AnswerGetInfoDetails2Message

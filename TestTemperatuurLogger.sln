@@ -17,6 +17,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YTGraphWPFTester", "..\Char
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Module_Graphs", "..\ChartSample_Src\Module_Graphs\Module_Graphs.csproj", "{08C646F3-B20A-4DD6-BC44-738303B1D7A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATALoggerFileLib", "ATALoggerFileLib\ATALoggerFileLib.csproj", "{20CE9B7F-B571-483E-8CA8-DF930F261562}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATALoggerFileLibTests", "ATALoggerFileLibTests\ATALoggerFileLibTests.csproj", "{91507E48-5318-4E44-8675-01D93393B5F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadLogpFile", "ReadLogpFile\ReadLogpFile.csproj", "{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +108,40 @@ Global
 		{08C646F3-B20A-4DD6-BC44-738303B1D7A8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{08C646F3-B20A-4DD6-BC44-738303B1D7A8}.Release|x86.ActiveCfg = Release|Any CPU
 		{08C646F3-B20A-4DD6-BC44-738303B1D7A8}.Release|x86.Build.0 = Release|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Debug|x86.Build.0 = Debug|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Release|x86.ActiveCfg = Release|Any CPU
+		{20CE9B7F-B571-483E-8CA8-DF930F261562}.Release|x86.Build.0 = Release|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Debug|x86.Build.0 = Debug|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Release|x86.ActiveCfg = Release|Any CPU
+		{91507E48-5318-4E44-8675-01D93393B5F6}.Release|x86.Build.0 = Release|Any CPU
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Debug|x86.ActiveCfg = Debug|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Debug|x86.Build.0 = Debug|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|Any CPU.ActiveCfg = Release|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|Mixed Platforms.Build.0 = Release|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|x86.ActiveCfg = Release|x86
+		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

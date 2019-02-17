@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 
-namespace ATALoggerLib
+namespace ATALogger
 {
 	public class LoggerFinder
 	{
