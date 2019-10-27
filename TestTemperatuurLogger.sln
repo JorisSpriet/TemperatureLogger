@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATALoggerFileLibTests", "AT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadLogpFile", "ReadLogpFile\ReadLogpFile.csproj", "{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATALoggerGetSerialNumber", "ATALoggerGetSerialNumber\ATALoggerGetSerialNumber.csproj", "{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,6 +144,18 @@ Global
 		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|Mixed Platforms.Build.0 = Release|x86
 		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|x86.ActiveCfg = Release|x86
 		{97758AE9-AA62-4C9F-8B22-FEF2E7A529C4}.Release|x86.Build.0 = Release|x86
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Debug|x86.Build.0 = Debug|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Release|x86.ActiveCfg = Release|Any CPU
+		{C32EB0CF-ABD9-4EF0-B3EE-7BE66331FB84}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

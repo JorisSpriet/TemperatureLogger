@@ -28,7 +28,7 @@ namespace ATALogger
 		private static byte[] GetTemplate()
 		{
 			var result = new byte[20];
-			Buffer.BlockCopy(template,0,result,0,10);
+			Buffer.BlockCopy(template,0,result,0,20);
 			return result;
 		}
 
