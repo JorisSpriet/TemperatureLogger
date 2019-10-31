@@ -45,6 +45,7 @@ namespace ATALogger
 
 		public static byte[] GetDataCommand = { 0x57, 0x2d };
 
+		/// logger -> PC
 		public static byte[] AnswerGetSerialCommand = { 0x52, 0x01 };
 
 		public static byte[] AnswerGetDataInfo1Command = { 0x54, 0x01 };
