@@ -39,26 +39,17 @@ namespace ATALogger
 		public byte[] Header;
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
 		public byte[] SerialNumber;
-		//[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 10)]
-		//public string SerialNumber;
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
 		public byte[] AnswerCode;
 
-		public byte Stx;
+		//0x02
+		public byte Stx; 
 
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
 		public byte[] Description;
-		
-		public int Unknown1;
 
-		public int Unknown2;
-
-		public short Unknown3;
-
-		public short Unknown4;
-
-		public short Unknown5;
-
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
+		public byte[] Unknown;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
 		public byte[] Tail;
@@ -67,13 +58,13 @@ namespace ATALogger
 		{
 			return Messages.Header.SequenceEqual(Header) &&
 			       Messages.AnswerGetSerialCommand.SequenceEqual(AnswerCode) &&
+				   Stx==0x02 &&
 			       Messages.Tail.SequenceEqual(Tail);
 		}
 
 		public string GetSerialNumber()
 		{
 			return Encoding.ASCII.GetString(SerialNumber);
-			//throw  new Exception();
 		}
 
 	}
