@@ -40,10 +40,10 @@ namespace ATALogger
 		public int LogItemCount;
 
 		//[FieldOffset(33)] 
-		public int Reserved1; //0x00000001
+		public int Reserved1=0x1; //0x00000001
 
 		//[FieldOffset(37)] 
-		public int Reserved2; //0x00000002
+		public int Reserved2=0x2; //0x00000002
 
 		//[FieldOffset(41)]
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)]

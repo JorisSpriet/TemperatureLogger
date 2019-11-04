@@ -50,19 +50,22 @@ namespace ATALogger
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
 		public byte[] Description;
 		
-		public int Unknown1;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
 
-		public int Unknown2;
+		public byte Unknown1;
 
 		public byte Stx;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
 		public byte[] Info;
 
-		public short Unknown4;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+		public byte Unknown2;
 
-		public short Unknown5;
+		public short NumberOfSamples;
 
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)]
+		public byte[] Unknown3;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
 		public byte[] Tail;
