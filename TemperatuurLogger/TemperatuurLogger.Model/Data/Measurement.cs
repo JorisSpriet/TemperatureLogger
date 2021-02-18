@@ -1,7 +1,7 @@
 using System;
 using Xtensive.Orm;
 
-namespace TemperatuurLogger.Model.Data
+namespace TemperatuurLogger.Model
 {
     using TemperatuurLogger.Model;
 

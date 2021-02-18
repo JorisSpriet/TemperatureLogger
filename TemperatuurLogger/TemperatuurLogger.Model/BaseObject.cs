@@ -8,6 +8,7 @@ namespace TemperatuurLogger.Model
     /// </summary>
     public abstract class BaseObject : Entity
     {       
+        [Field, Key]
         public long ID { get; private set;}
     }
 }

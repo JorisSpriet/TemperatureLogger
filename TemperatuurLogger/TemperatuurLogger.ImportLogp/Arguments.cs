@@ -1,43 +1,37 @@
 using System;
 using System.IO;
+using static TemperatuurLogger.Model.Utils;
 
 namespace TemperatuurLogger.ImportLogp
 {
+    /// <summary>
+    /// Arguments encapsulation.
+    /// </summary>
     public class Arguments
     {
-        private string serialNumber;
-        private string logpfile;
-        private bool create;
+        #pragma warning disable 1591
+        public string SerialNumber { get; private set; }
+        public string LogpFile { get; private set; }
+        public bool Create { get; private set; }
 
-        private string GetUserProfilePath()
-        {
-            var currentPlatform = Environment.OSVersion.Platform;
-            switch(currentPlatform) {
-                case PlatformID.Win32NT:
-                return System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            case PlatformID.Unix:
-                return System.Environment.GetEnvironmentVariable("HOME");
-            default:
-                throw new Exception($"Platform {currentPlatform} not supported.");
-        }
+        public bool Verbose { get; private set; }
 
         public Arguments Validate()
         {
-            var homeDir = GetUserProfilePath();
-            var target = Path.Combine(, Path.Combine("TemperatuurLogger", serialNumber));
-            var targetExists = File.Exists(target);
+            var dbfile = GetDb3FullPath();
+            var dbfileExists = File.Exists(dbfile);
             var ok = true;
 
-            if (create == targetExists)
+            if (Create == dbfileExists)
             {
                 ok = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(($"{target} {(targetExists ? "exists" : "does not exist")} - {(create ? "do not" : "") } use option --create"));
+                Console.WriteLine(($"{dbfile} {(dbfileExists ? "exists" : "does not exist")} - {(Create ? "do not" : "") } use option --create"));
             }
-            if( ! File.Exists(logpfile)) {
+            if( ! File.Exists(LogpFile)) {
                 ok = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"{logpfile} does not exist; specify an existing logp file");
+                Console.WriteLine($"{LogpFile} does not exist; specify an existing logp file");
             }
             if(!ok)
                 Environment.Exit(1);
@@ -45,11 +39,19 @@ namespace TemperatuurLogger.ImportLogp
             return this;
         }
 
-        public Arguments(string serialNumber, string logpfile, bool create)
+        /// <summary>
+        /// c'tor
+        /// </summary>
+        /// <param name="serialNumber"></param>
+        /// <param name="logpfile"></param>
+        /// <param name="create"></param>
+        /// <param name="verbose"></param>
+        public Arguments(string serialNumber, string logpfile, bool create, bool verbose)
         {
-            this.serialNumber=serialNumber;
-            this.logpfile = logpfile;
-            this.create = create;
+            SerialNumber = serialNumber;
+            LogpFile = logpfile;
+            Create = create;
+            Verbose = verbose;
         }
     }
 }

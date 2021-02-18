@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 
 namespace TemperatuurLogger.ImportLogp
 {
+	/// <summary>
+    /// Maps to binary structure of logp file produced by tool.
+    /// </summary>    
 	[StructLayout(LayoutKind.Sequential,Pack=1)]
-	public struct LogFileHeader
+	internal struct LogpFileHeader
 	{
+		#pragma warning disable 1591
 		public const int Length = 60;
 
-		//public LogFileHeader Read(Stream stream)
-		//{
-			
-		//}
-
-		//[FieldOffset(0)] 
 		[MarshalAs(UnmanagedType.ByValTStr,SizeConst = 17)]
 		public string /*char[29]*/ LoggerName;
 

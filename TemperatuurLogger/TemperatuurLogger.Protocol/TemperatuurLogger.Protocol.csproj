@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xtensive.Orm" Version="6.0.4" />
-    <PackageReference Include="Xtensive.Orm.SQLite" Version="6.0.4" />
+    <PackageReference Include="log4net" Version="2.0.12" />
+    <PackageReference Include="system.io.ports" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

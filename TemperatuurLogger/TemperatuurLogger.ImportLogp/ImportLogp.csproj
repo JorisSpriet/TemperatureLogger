@@ -12,4 +12,8 @@
     <PackageReference Include="Xtensive.Orm.Sqlite" Version="6.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TemperatuurLogger.Model\TemperatuurLogger.Model.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,11 +1,8 @@
 using System;
 using Xtensive.Orm;
 
-namespace TemperatuurLogger.Model.Data
+namespace TemperatuurLogger.Model
 {
-    using TemperatuurLogger.Model;
-    using TemperatuurLogger.Model.Device;
-
     [HierarchyRoot]
     public class MeasurementDownload : BaseObject
     {
@@ -21,13 +18,15 @@ namespace TemperatuurLogger.Model.Data
         [Field]
         public DateTime EndTime { get; private set; }
 
-        [Field, Association("Download")]
+        [Field, Association(PairTo="Download",OnOwnerRemove=OnRemoveAction.Cascade, OnTargetRemove=OnRemoveAction.Deny)]
         public EntitySet<Measurement> Measurements { get; private set; }
 
-        public MeasurementDownload(Logger logger)
+        public MeasurementDownload(Logger logger, DateTime downloadTime, DateTime startTime, DateTime endTime)
         {
             Logger = logger;
-            DownloadTime = DateTime.Now;
+            DownloadTime = downloadTime;
+            StartTime = startTime;
+            EndTime = endTime;
         }
     }
 }

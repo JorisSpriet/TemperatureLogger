@@ -1,23 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace TemperatuurLogger.ImportLogp
 {
 
+	/// <summary>
+    /// Maps to binary structure of logp file produced by tool.
+    /// </summary> 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	internal struct LogItem
-	{
-		//[FieldOffset(0)] 
+	internal struct LogpFileItem	
+	{		
 		[MarshalAs(UnmanagedType.ByValArray,SizeConst = 14)]
-		public byte[] /*char[]*/ DateTime; //yyyyMMddHHmmss
-		//[FieldOffset(14)] 
+		public byte[]  DateTime; //yyyyMMddHHmmss
+		
 		public float Temperature; //IEE-754
-		//[FieldOffset(18)] 
-		//public byte Reserved; //@
+				
 
 		public DateTime TimeStamp()
 		{
