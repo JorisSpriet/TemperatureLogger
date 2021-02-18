@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatuurLogger.Model", "TemperatuurLogger.Model\TemperatuurLogger.Model.csproj", "{AD124B40-8C07-4696-83B8-AD57DFF7D301}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatuurLogger.Model", "TemperatuurLogger.Model\TemperatuurLogger.Model.csproj", "{AD124B40-8C07-4696-83B8-AD57DFF7D301}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportLogp", "TemperatuurLogger.ImportLogp\ImportLogp.csproj", "{8CD26B98-BAD5-49DC-AC0F-C0A5CE1142B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImportLogp", "TemperatuurLogger.ImportLogp\ImportLogp.csproj", "{8CD26B98-BAD5-49DC-AC0F-C0A5CE1142B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemperatuurLogger.Protocol", "TemperatuurLogger.Protocol\TemperatuurLogger.Protocol.csproj", "{E8B9E892-DD22-4B4C-9F35-5C83F1638A96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatuurLogger.Protocol", "TemperatuurLogger.Protocol\TemperatuurLogger.Protocol.csproj", "{E8B9E892-DD22-4B4C-9F35-5C83F1638A96}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemperatuurLogger.Test", "TemperatuurLogger.Test\TemperatuurLogger.Test.csproj", "{8EEB347E-2391-469D-A29C-0293651C32C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AD124B40-8C07-4696-83B8-AD57DFF7D301}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +57,23 @@ Global
 		{E8B9E892-DD22-4B4C-9F35-5C83F1638A96}.Release|x64.Build.0 = Release|Any CPU
 		{E8B9E892-DD22-4B4C-9F35-5C83F1638A96}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8B9E892-DD22-4B4C-9F35-5C83F1638A96}.Release|x86.Build.0 = Release|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Debug|x64.Build.0 = Debug|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Debug|x86.Build.0 = Debug|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Release|x64.ActiveCfg = Release|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Release|x64.Build.0 = Release|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EEB347E-2391-469D-A29C-0293651C32C5}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFC0DBF2-8384-4320-B277-1A1B19F0F6A2}
 	EndGlobalSection
 EndGlobal

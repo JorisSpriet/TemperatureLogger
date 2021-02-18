@@ -42,20 +42,10 @@ namespace TemperatuurLogger.Protocol
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
 		public byte[] AnswerCode;
 
-		public byte Stx;
-
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-		public byte[] Description;
+		public int SampleInterval;
 		
-		public int Unknown1;
 
-		public int Unknown2;
-
-		public short Unknown3;
-
-		public short Unknown4;
-
-		public short Unknown5;
+		public byte Unknown5;
 
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -64,14 +54,9 @@ namespace TemperatuurLogger.Protocol
 		public bool IsValid()
 		{
 			return Messages.Header.SequenceEqual(Header) &&
-			       Messages.AnswerGetSerialCommand.SequenceEqual(AnswerCode) &&
+			       Messages.AnswerGetDataInfo2Command.SequenceEqual(AnswerCode) &&
 			       Messages.Tail.SequenceEqual(Tail);
 		}
-
-		public string GetSerialNumber()
-		{
-			return Encoding.ASCII.GetString(SerialNumber);
-		}
-
+				
 	}
 }

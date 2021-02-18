@@ -20,15 +20,15 @@ namespace TemperatuurLogger.Protocol
 			0x29, 0x7d, 0x7e, 0x04
 		};
 
-		public static readonly byte[] Header = {0x01, 0x16, 0x7b, 0x28,};
+		public static readonly byte[] Header = { 0x01, 0x16, 0x7b, 0x28, };
 
-		public static readonly byte[] Tail = {0x29, 0x7d, 0x7e, 0x04};
+		public static readonly byte[] Tail = { 0x29, 0x7d, 0x7e, 0x04 };
 
 
 		private static byte[] GetTemplate()
 		{
 			var result = new byte[20];
-			Buffer.BlockCopy(template,0,result,0,20);
+			Buffer.BlockCopy(template, 0, result, 0, 20);
 			return result;
 		}
 
@@ -36,12 +36,12 @@ namespace TemperatuurLogger.Protocol
 		/// <summary>
 		/// PC -> logger
 		/// </summary>
-		public static byte[] GetSerialCommand = {0x51, 0x51};
+		public static byte[] GetSerialCommand = { 0x51, 0x51 };
 
 		//
-		public static byte[] GetDataInfo1Command = { 0x53, 0x29 };
+		public static byte[] GetDataInfo1Command(bool x) { return x ? new byte[]{ 0x53,0x49} : new byte[] { 0x53, 0x29 }; }
 
-		public static byte[] GetDataInfo2Command = {0x5f, 0x25};
+		public static byte[] GetDataInfo2Command(bool x) { return x ? new byte[] { 0x5f, 0x45 } : new byte[] { 0x5f, 0x25 }; }
 
 		public static byte[] GetDataCommand = { 0x57, 0x2d };
 
@@ -79,14 +79,14 @@ namespace TemperatuurLogger.Protocol
 			return result;
 		}
 
-		public static byte[] GetDataInfo1Message(string serialNumber)
+		public static byte[] GetDataInfo1Message(string serialNumber, bool x)
 		{
-			return GetCommandForSerialNumber(serialNumber, GetDataInfo1Command);
+			return GetCommandForSerialNumber(serialNumber, GetDataInfo1Command(x));
 		}
 
-		public static byte[] GetDataInfo2Message(string serialNumber)
+		public static byte[] GetDataInfo2Message(string serialNumber, bool x)
 		{
-			return GetCommandForSerialNumber(serialNumber, GetDataInfo2Command);
+			return GetCommandForSerialNumber(serialNumber, GetDataInfo2Command(x));
 		}
 
 		public static byte[] GetDataMessage(string serialNumber)

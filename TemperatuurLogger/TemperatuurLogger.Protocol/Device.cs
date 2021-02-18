@@ -9,20 +9,22 @@ namespace TemperatuurLogger.Protocol
 {
 	public class Device : IDisposable, IDevice
 	{
-        //private readonly SerialPort serialPort;
+        private readonly SerialPort serialPort;
         private readonly string port;
+		private readonly bool x;
 
         public string SerialNumber { get; private set; }
 
+		
+
 		public DeviceDetails GetDetailsFromDevice()
 		{
-			var serialPort = new SerialPort(port, 38400,Parity.None,8,StopBits.One);
-            try
+		    try
             {
                 serialPort.Open();				
-                serialPort.Write(Messages.GetDataInfo1Message(SerialNumber), 0, 20);
+                serialPort.Write(Messages.GetDataInfo1Message(SerialNumber,x), 0, 20);
 
-                Thread.Sleep(1500);
+                Thread.Sleep(500);
                 var buffer = new byte[Marshal.SizeOf<AnswerGetInfoDetails1Message>()];
                 var offset = 0;
 
@@ -40,20 +42,43 @@ namespace TemperatuurLogger.Protocol
                 if (!details1.IsValid())
                     throw new Exception("Received invalid details from device.");
 
-                var result = new DeviceDetails
-                {
-                    Description = Encoding.ASCII.GetString(details1.Description, 0, 16),
-                    SerialNumber = Encoding.ASCII.GetString(details1.SerialNumber, 0, 10),
-                    Info = Encoding.ASCII.GetString(details1.Info, 0, 6)
+				serialPort.Write(Messages.GetDataInfo2Message(SerialNumber, x), 0, 20);
+				Thread.Sleep(500);
+
+				buffer = new byte[Marshal.SizeOf<AnswerGetInfoDetails2Message>()];
+				offset = 0;
+
+				while (serialPort.BytesToRead > 0) {
+					var a = serialPort.BytesToRead;
+					int r = serialPort.Read(buffer, offset, a);
+					offset += r;
+				}
+				Console.WriteLine($"Received {offset} bytes");
+
+				var details2 = Utils.Map<AnswerGetInfoDetails2Message>(buffer);
+
+				var result = new DeviceDetails
+				{
+					Description = Encoding.ASCII.GetString(details1.Description, 0, 16),
+					SerialNumber = Encoding.ASCII.GetString(details1.SerialNumber, 0, 10),
+					Model = Encoding.ASCII.GetString(details1.Model, 0, 6),
+					NumberOfSamples = details1.NumberOfSamples,
+
+					SampleInterval = details2.SampleInterval,
+					OffsetCh1 = Convert.ToDecimal(details1.OffsetCh1)/10M,
+					OffsetCh2 = Convert.ToDecimal(details1.OffsetCh2)/10M,
+					DelayTime =details1.DelayTime
+					
                 };
 
                 if (SerialNumber != result.SerialNumber)
                     throw new Exception("Received invalid details from device : different serial number");
 
+
+
                 return result;
             } finally {
                 serialPort.Close();
-                serialPort.Dispose();
             }
  
         }
@@ -90,7 +115,7 @@ namespace TemperatuurLogger.Protocol
 
 				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
 				// TODO: set large fields to null.
-				//serialPort.Dispose();
+				serialPort.Dispose();
 
 				disposedValue = true;
 			}
@@ -114,10 +139,11 @@ namespace TemperatuurLogger.Protocol
 		
 		#endregion
 
-		public Device(string serialNumber, string port)
+		public Device(string serialNumber, SerialPort port)
 		{
 			SerialNumber = serialNumber;
-			this.port = port;
+			serialPort = port;
+			x = serialNumber.StartsWith("HE");
 		}
 	}
 

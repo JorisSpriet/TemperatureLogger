@@ -10,6 +10,22 @@ namespace TemperatuurLogger.Protocol
 	{
 		public static ILog logger = LogManager.GetLogger(typeof(DeviceFinder));
 
+		public static string DefaultPreferredPort
+		{
+			get
+			{
+				var currentPlatform = Environment.OSVersion.Platform;
+				switch (currentPlatform) {
+					case PlatformID.Win32NT:
+						return "COM3";
+					case PlatformID.Unix:
+						return "/dev/ttyUSB0";
+					default:
+						throw new Exception($"Platform {currentPlatform} not supported.");
+				}
+			}
+		}
+
 		public Device FindLoggerOnPort(string preferredPort)
 		{
 			var currentPortNames = SerialPort.GetPortNames();
@@ -73,7 +89,7 @@ namespace TemperatuurLogger.Protocol
 						var a = Utils.Map<AnswerGetSerialNumberMessage>(answer);
 						if (a.IsValid())
 						{
-							return new Device(a.GetSerialNumber(), port);
+							return new Device(a.GetSerialNumber(), serialPort);
 						}
 					}
 					catch

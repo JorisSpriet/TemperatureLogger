@@ -56,15 +56,27 @@ namespace TemperatuurLogger.Protocol
 		public byte Stx;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-		public byte[] Info;
+		public byte[] Model;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
 		public byte[] Unknown2;
 
 		public short NumberOfSamples;
 
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)]
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] 
 		public byte[] Unknown3;
+
+		public short OffsetCh1;
+
+		public short OffsetCh2;
+
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+		public byte[] Unknown4;
+
+		public short DelayTime;
+
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+		public byte[] TailUnknown;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
 		public byte[] Tail;
@@ -72,7 +84,7 @@ namespace TemperatuurLogger.Protocol
 		public bool IsValid()
 		{
 			return Messages.Header.SequenceEqual(Header) &&
-			       Messages.AnswerGetSerialCommand.SequenceEqual(AnswerCode) &&
+			       Messages.AnswerGetDataInfo1Command.SequenceEqual(AnswerCode) &&
 			       Messages.Tail.SequenceEqual(Tail);
 		}
 

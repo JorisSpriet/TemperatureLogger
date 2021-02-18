@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-
-namespace TemperatuurLogger.Protocol
+﻿namespace TemperatuurLogger.Protocol
 {
 	public class DeviceDetails
 	{
@@ -14,7 +6,21 @@ namespace TemperatuurLogger.Protocol
 
 		public string Description { get; set; }
 
-		public string Info { get; set; }
+		public string Model { get; set; }
+
+		public int DelayTime { get; set; }
+
+		public int SampleInterval { get; set; }
+
+		public int NumberOfSamples { get; set; }
+
+		public int LoggingInterval { get; set; }
+
+		public decimal OffsetCh1 { get; set; }
+
+		public decimal OffsetCh2 { get; set; }
+
+
 	}
 
 }
