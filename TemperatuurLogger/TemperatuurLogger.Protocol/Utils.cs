@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace TemperatuurLogger.Protocol
 {
@@ -16,6 +13,21 @@ namespace TemperatuurLogger.Protocol
 			return lfh;
 		}
 
+        public static T[] MapArray<T>(byte[] data)
+        {
+            //mapping bytes to arrays of structs is hell in C#...
+            var objectSize = Marshal.SizeOf(typeof(T));
+            var objectCount = data.Length / objectSize;
+            T[] result = new T[objectCount];
+
+            var chunk = new byte[objectSize];
+            for (int i = 0; i < objectCount; i++)
+            {
+                Array.Copy(data, i * objectSize, chunk, 0, objectSize);
+                result[i] = Map<T>(chunk);
+            }
+            return result;
+        }
 		public static int LengthOf<T>()
 		{
 			return Marshal.SizeOf(typeof(T));

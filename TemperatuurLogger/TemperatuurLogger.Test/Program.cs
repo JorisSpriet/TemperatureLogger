@@ -1,14 +1,24 @@
 ﻿using System;
+using System.IO;
 using TemperatuurLogger.Protocol;
+using log4net.Config;
 
 namespace TemperatuurLogger.Test
 {
     class Program
     {
+        static void ConfigureLog4Net()
+        {
+            var d = AppDomain.CurrentDomain.BaseDirectory;
+            var cfg = Path.Combine(d, "log4net.config");
+            if(File.Exists(cfg))
+                XmlConfigurator.ConfigureAndWatch(new FileInfo(cfg));
+        }
+
         static void Main(string[] args)
         {
-            // var t = typeof(AnswerGetInfoDetails1Message);
-            // Console.WriteLine(sizeof(t));
+                          
+            ConfigureLog4Net();
 
             var df = new DeviceFinder();
             var d = df.FindLoggerOnPort(DeviceFinder.DefaultPreferredPort);
@@ -31,6 +41,16 @@ namespace TemperatuurLogger.Test
             Console.WriteLine($"Offset CH2      : {dd.OffsetCh2}");
 
             Console.ReadLine();
+
+            var s = d.GetSamplesFromDevice(null).Result;
+
+            Console.WriteLine($"Received {s.Length} samples");
+
+            for (int i = 0; i < 10;i++) {
+                var x = s[i];
+                Console.WriteLine($"{x.ID:5} {x.TimeStamp:yyyy-MM-dd HH:mm:ss} {x.Temperature}");
+            }
+
 
         }
     }

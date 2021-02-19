@@ -1,4 +1,6 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace TemperatuurLogger.Protocol
 {
 	public interface  IDevice
@@ -7,7 +9,7 @@ namespace TemperatuurLogger.Protocol
 
 		DeviceDetails GetDetailsFromDevice();
 
-		void GetSamplesFromDevice(SamplesReadingCallback samplesReadingCallback);
+		Task<DeviceSample[]> GetSamplesFromDevice(SamplesReadingCallback samplesReadingCallback);
 
 		void ClearDataOnDevice();
 
