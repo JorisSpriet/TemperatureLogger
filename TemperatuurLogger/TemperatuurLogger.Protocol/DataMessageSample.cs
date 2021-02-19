@@ -26,7 +26,7 @@ namespace TemperatuurLogger.Protocol
             var day = (EncodedTimeStamp >> 17) & 0x0000001F;
             var hour = (EncodedTimeStamp >> 12) & 0x0000001F;
             var min = (EncodedTimeStamp >> 6) & 0x0000003F;
-            var sec = (EncodedTimeStamp >> 6) & 0x0000003F;
+            var sec = (EncodedTimeStamp) & 0x0000003F;
             return new DateTime(year, month, day, hour, min, sec);
         }
 
