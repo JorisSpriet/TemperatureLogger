@@ -58,17 +58,17 @@ LOGGER -> PC
 297d7e04
 
 PC -> LOGGER
-01167b28
-48453137584430303439
-5b01				SET CLOCK
-19					bcd SEC
+01167b28								4
+48453137584430303439					10
+5b01				SET CLOCK			2
+19					bcd SEC				7
 37					bcd min
 19					bcd hour
 19					bcd day
 02					bcd month
 2021				bcd year
-6d
-297d7e04
+6d										1
+297d7e04								4
 
 LOGGER -> PC
 

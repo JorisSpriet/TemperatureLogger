@@ -36,23 +36,27 @@ namespace TemperatuurLogger.Protocol
 		/// <summary>
 		/// PC -> logger
 		/// </summary>
-		public static byte[] GetSerialCommand = { 0x51, 0x51 };
+		private static byte[] GetSerialCommand = { 0x51, 0x51 };
 
 		//
-		public static byte[] GetDataInfo1Command(bool x) { return x ? new byte[]{ 0x53,0x49} : new byte[] { 0x53, 0x29 }; }
+		private static byte[] GetDataInfo1Command(bool x) { return x ? new byte[]{ 0x53,0x49} : new byte[] { 0x53, 0x29 }; }
 
-		public static byte[] GetDataInfo2Command(bool x) { return x ? new byte[] { 0x5f, 0x45 } : new byte[] { 0x5f, 0x25 }; }
+		private static byte[] GetDataInfo2Command(bool x) { return x ? new byte[] { 0x5f, 0x45 } : new byte[] { 0x5f, 0x25 }; }
 
-		public static byte[] GetDataCommand = { 0x57, 0x2d };
+		private static byte[] GetSetClockCommand(bool x) { return x ? new byte[] { 0x5b, 0x01 } : new byte[] { 0x5b, 0x01 }; }
+
+		private static byte[] GetDataCommand = { 0x57, 0x2d };
+
+		private static byte[] GetClearDataCommand(bool x) { return x ? new byte[] { 0x59, 0x23 } : new byte[] { 0x59, 0x23 }; }
 
 		/// logger -> PC
-		public static byte[] AnswerGetSerialCommand = { 0x52, 0x01 };
+		internal static byte[] AnswerGetSerialCommand = { 0x52, 0x01 };
 
-		public static byte[] AnswerGetDataInfo1Command = { 0x54, 0x01 };
+		internal static byte[] AnswerGetDataInfo1Command = { 0x54, 0x01 };
 
-		public static byte[] AnswerGetDataInfo2Command = { 0x60, 0x01 };
+		internal static byte[] AnswerGetDataInfo2Command = { 0x60, 0x01 };
 
-		public static byte[] AnswerGetDataCommand = { 0x58, 0x02 };
+		private static byte[] AnswerGetDataCommand = { 0x58, 0x02 };
 
 		public static byte[] GetSerialNumberMessage()
 		{
@@ -61,11 +65,23 @@ namespace TemperatuurLogger.Protocol
 			return result;
 		}
 
-		//TODO FIXUP Message.ClearDataMessage()
-		public static byte[] ClearDataMessage()
+		public static byte[] GetClearDataMessage(string serialNumber, bool x)
 		{
-			return null;
+			return GetCommandForSerialNumber(serialNumber, GetClearDataCommand(x));
 		}
+
+		public static byte[] GetSetClockMessage(string serialNumber, bool x)
+		{
+			var command = new byte[28];
+			Buffer.BlockCopy(Header, 0, command, 0, 4);
+			Buffer.BlockCopy(Tail, 0, command, 25, 4);
+			Buffer.BlockCopy(Encoding.ASCII.GetBytes(serialNumber), 0, command, 4, 10);
+			Buffer.BlockCopy(GetSetClockCommand(x), 0, command, 14, 2);
+			Buffer.BlockCopy(Utils.GetTimeBCD(), 0, command, 16, 7);
+			Utils.SetBcc(command);
+			return command;
+		}
+
 		private static byte[] GetCommandForSerialNumber(string serialNumber, byte[] command)
 		{
 			if (serialNumber.Length != 10)

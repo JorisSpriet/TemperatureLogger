@@ -25,6 +25,20 @@ namespace TemperatuurLogger.Protocol
 
         public string SerialNumber { get; private set; }
 
+        private void WithSerialPort(Action action)
+		{
+            logger.Debug($"Opening port {serialPort.PortName}..");
+            serialPort.Open();
+            logger.Debug($"Serial port {serialPort.PortName} opened.");
+
+            try {
+                action();
+            }
+            finally {
+                serialPort.Close();
+            }
+		}
+
         private void GetInfoDetails1(DeviceDetails result)
         {
             logger.Debug($"Sending command 'get info (1)'");
@@ -32,7 +46,6 @@ namespace TemperatuurLogger.Protocol
             var question = Messages.GetDataInfo1Message(SerialNumber, x);
             var details1 = Get<AnswerGetInfoDetails1Message>(question);
 
-            //TODO 0 JS REWORK IsValid 
             if (!details1.IsValid())
                 throw new Exception("Received invalid details from device.");
 
@@ -56,26 +69,16 @@ namespace TemperatuurLogger.Protocol
 
         public DeviceDetails GetDetailsFromDevice()
         {
-            try
+            var result = new DeviceDetails();
+            WithSerialPort(() =>
             {
-                logger.Debug($"Opening port {serialPort.PortName}..");
-                serialPort.Open();
-                logger.Debug($"Serial port {serialPort.PortName} opened.");
-
-                var result = new DeviceDetails();
                 GetInfoDetails1(result);
                 GetInfoDetails2(result);
 
                 if (SerialNumber != result.SerialNumber)
                     throw new Exception("Received invalid details from device : different serial number");
-
-                return result;
-            }
-            finally
-            {
-                serialPort.Close();
-            }
-
+            });
+            return result;
         }
 
         T Get<T>(byte[] question = null)
@@ -86,18 +89,14 @@ namespace TemperatuurLogger.Protocol
             var offset = 0;
 
             sw.Restart();
-            while (offset < buffer.Length)
-            {
-                //TODO 1 JS MORE PERFORMANT/SURE WAY OF READING FROM THE SERIAL PORT
+            while (offset < buffer.Length) {
                 //TODO 1 JS PROTECT AGAINST ENDLESS LOOP
-                Thread.Sleep(10);
-                var a = serialPort.BytesToRead;
-                var bytecount = (a < buffer.Length - offset) ? a : (buffer.Length - offset);
+                var bytecount = buffer.Length - offset;
                 int r = serialPort.BaseStream.Read(buffer, offset, bytecount);
                 offset += r;
                 logger.Debug($"\treceived {r} bytes ({offset} of {buffer.Length})");
-                // if(sw.ElapsedMilliseconds>maxTime)
-                //     throw new Exception($"Time-out : {sw.ElapsedMilliseconds} for receiving {buffer.Length} is too long.");
+                if (r == 0)
+                    Thread.Sleep(1);
             }
             logger.Debug($"Received a total of {offset} bytes");
 
@@ -118,7 +117,6 @@ namespace TemperatuurLogger.Protocol
                     rest * Marshal.SizeOf<DataMessageSample>() +
                     Marshal.SizeOf<DataMessageTail>();
             }
-
             var buffer = new byte[Marshal.SizeOf<DataMessage>() * messageCount];
             var offset = 0;
 
@@ -127,25 +125,19 @@ namespace TemperatuurLogger.Protocol
 
             var question = Messages.GetDataMessage(SerialNumber);
             SendQuestion(question);
-            Thread.Sleep(150);
             
             sw.Restart();
-
             while (offset < totalBytes)
             {
-                //TODO 1 JS MORE PERFORMANT/SURE WAY OF READING FROM THE SERIAL PORT
                 //TODO 1 JS PROTECT AGAINST ENDLESS LOOP                
-                var a = serialPort.BytesToRead;
-                var bytecount = (a < buffer.Length - offset) ? a : (buffer.Length - offset);
+                var bytecount = buffer.Length - offset;
                 int r = serialPort.BaseStream.Read(buffer, offset, bytecount);
                 offset += r;
                 decimal progress = Convert.ToDecimal(offset * 100 / buffer.Length);
                 if(r>0)
                     logger.Debug($"\treceived {r} bytes ({offset} of {buffer.Length}) ({ progress:##0.##}%)");
-                else
+                if (r == 0)
                     Thread.Sleep(1);
-                // if (sw.ElapsedMilliseconds > maxTime)
-                //     throw new Exception($"Time-out : {sw.ElapsedMilliseconds} for receiving {buffer.Length} is too long.");
             }
             sw.Start();
             logger.Info($"Received a total of {offset} bytes in {sw.Elapsed}");
@@ -180,10 +172,8 @@ namespace TemperatuurLogger.Protocol
             var result = new List<DeviceSample>();
             await Task.Run(() =>
             {
-                try
+                WithSerialPort(() =>
                 {
-                    serialPort.Open();
-
                     var details = new DeviceDetails();
                     GetInfoDetails1(details);
 
@@ -191,8 +181,7 @@ namespace TemperatuurLogger.Protocol
                     GetData(data);
 
                     int sampleNumber = 1;
-                    foreach (var sample in data)
-                    {
+                    foreach (var sample in data) {
                         result.Add(new DeviceSample
                         {
                             ID = sampleNumber++,
@@ -200,23 +189,24 @@ namespace TemperatuurLogger.Protocol
                             TimeStamp = sample.GetTimeStamp()
                         });
                     }
-                }
-                finally
-                {
-                    serialPort.Close();
-                }
+                });
             });
 
             return result.ToArray();
         }
 
 
+
+
         public void ClearDataOnDevice()
         {
-            //TODO 0 Implemenet ClearDataOnDevice
-            //serialPort.Write(Messages.ClearDataMessage());
+            WithSerialPort(() =>
+            {
+                Get<AnswerClearDataMessage>(Messages.GetClearDataMessage(SerialNumber, x));
+                
+                //we probably should check the answer...
+            });
         }
-
 
 
         #region IDisposable Support
