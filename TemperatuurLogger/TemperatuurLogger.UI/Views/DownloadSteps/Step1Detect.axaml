@@ -10,9 +10,9 @@
 		<TextBlock Grid.Column="1" Grid.Row="1">STOP DE LOGGER IN DE ONDERSTE USB POORT</TextBlock>
 		
 		<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" >
-			<TextBlock>Nog geen logger gevonden...</TextBlock>
+			<TextBlock Text="{Binding DetectionStatus}" />
 			<Panel Width="100" />
-			<Button Command="Detect">Probeer opnieuw</Button>
+			<Button Command="{Binding Detect}">Probeer opnieuw</Button>
 		</StackPanel>
 	</Grid>
 </UserControl>
