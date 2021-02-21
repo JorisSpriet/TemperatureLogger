@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+		Height="500" Width="800" CanResize="False" SystemDecorations="BorderOnly"
+		BorderBrush="Teal" BorderThickness="5" Background="LightCyan"
+        x:Class="TemperatuurLogger.UI.Views.DownloadView"
+		xmlns:steps="using:TemperatuurLogger.UI.Views.DownloadSteps"
+        Title="DownloadView">
+	
+	<Grid>
+		<Grid ColumnDefinitions="1*,10*,1*" RowDefinitions="Auto,Auto">
+			<!--
+			<Button x:Name="previous"  Grid.Row="1" Name="left" VerticalAlignment="Center" Padding="20" Margin="5" IsEnabled="False">
+				<Path Data="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" Fill="Black"/>
+			</Button>
+			-->
+			<Carousel x:Name="carousel" Grid.ColumnSpan="3" Name="carousel" Width="800" Height="400" >
+				<steps:Step1Detect />
+				<steps:Step2ShowInfo/>
+				<steps:Step3Download/>
+				<steps:Step4Persist/>
+				<steps:Step5Reset/>
+				<steps:Step6Done/>
+			</Carousel>
+
+			<Button x:Name="cancel" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Stretch" Margin="5"
+					Command="{Binding Cancel}"
+					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}">Cancel</Button>
+
+			<Button x:Name="next" Grid.Row="1" Grid.Column="2" Name="right" VerticalAlignment="Center" HorizontalAlignment="Right" Padding="20" Margin="5"
+					Command="{Binding Next}" >
+				<Path Data="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" Fill="Black"/>
+			</Button>
+
+		</Grid>
+	</Grid>
+	
+</Window>

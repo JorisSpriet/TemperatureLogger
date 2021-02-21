@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TemperatuurLogger.UI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TemperatuurLogger.UI.Views.MainWindow"
+		x:Name="MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Apotheek Saelens"
+		CanResize="False"
+		Height="450" Width="800">
+
+	<Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+	<Grid ColumnDefinitions="1*,2*,1*" RowDefinitions="150,2*,5*" >
+		<Image Grid.Row="0" Source="/Assets/logo.png" Margin="10"/>
+		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+			<TextBlock Text="TEMPERATUURMETINGEN"  HorizontalAlignment="Center" Margin="10"
+					   FontFamily="Arial Rounded MT" FontSize="28" />
+			<Image Source="/Assets/dl-usb-t.png" />
+		</StackPanel>
+
+		<Border Grid.Row="2" Grid.Column="0" BorderThickness="5" CornerRadius="15" BorderBrush="Teal" Margin="5">
+			<Button  Background="Transparent"
+					 Command="{Binding StartDownloadWizard}"
+					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+				<Panel Width="200" Height="200">
+					<Grid RowDefinitions="Auto,Auto">
+						<TextBlock HorizontalAlignment="Center" Margin="10" Text="UITLEZEN"/>
+						<Image Grid.Row="1" Source="/Assets/download.png" Height="120" />
+					</Grid>
+				</Panel>
+			</Button>
+		</Border>
+
+		<Border Grid.Row="2" Grid.Column="2" BorderThickness="5" CornerRadius="15" BorderBrush="Teal" Margin="5">
+			<Button  Background="Transparent">
+				<Panel Width="200" Height="200">
+					<Grid RowDefinitions="Auto,Auto">
+						<TextBlock HorizontalAlignment="Center" Margin="10" Text="RAPPORTEREN"/>
+						<Image Grid.Row="1" Source="/Assets/printer.png" Height="120" />
+					</Grid>
+				</Panel>
+			</Button>
+		</Border>
+	</Grid>
+</Window>
