@@ -4,5 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TemperatuurLogger.UI.Views.DownloadSteps.Step3Download">
-  Welcome to Avalonia!
+	<Grid RowDefinitions="1*,1*,1*,1*,1*" Margin="100 0 100 0">
+		<TextBlock Grid.Column="1" Grid.Row="1" TextAlignment="Center"><![CDATA[Bezig met ophalen van temperatuurmetingen.
+
+Dit kan enkele minuten in beslag nemen !]]></TextBlock>
+		<TextBlock Grid.Row="2" Text="{Binding DownloadProgress}"/>	
+	    <ProgressBar Grid.Row="3" Minimum="0" Maximum="100" Value="{Binding Percentage}" ShowProgressText="True" Height="25" />
+	</Grid>
 </UserControl>

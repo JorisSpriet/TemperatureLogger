@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace TemperatuurLogger.Protocol
 {
@@ -16,6 +15,6 @@ namespace TemperatuurLogger.Protocol
 		void Dispose();
 	}
 
-	public delegate void SamplesReadingCallback(DeviceSample[] readSamples, int totalNumberOfSamples, int offSet);
+	public delegate void SamplesReadingCallback(int percentageCompleted, int samplesRead, int totalNumberOrSamples);
 
 }

@@ -57,7 +57,7 @@ namespace TemperatuurLogger.Protocol
 		internal static byte[] AnswerGetDataInfo2Command = { 0x60, 0x01 };
 
 		private static byte[] AnswerGetDataCommand = { 0x58, 0x02 };
-
+			
 		public static byte[] GetSerialNumberMessage()
 		{
 			var result = GetTemplate();
@@ -74,7 +74,7 @@ namespace TemperatuurLogger.Protocol
 		{
 			var command = new byte[28];
 			Buffer.BlockCopy(Header, 0, command, 0, 4);
-			Buffer.BlockCopy(Tail, 0, command, 25, 4);
+			Buffer.BlockCopy(Tail, 0, command, 24, 4);
 			Buffer.BlockCopy(Encoding.ASCII.GetBytes(serialNumber), 0, command, 4, 10);
 			Buffer.BlockCopy(GetSetClockCommand(x), 0, command, 14, 2);
 			Buffer.BlockCopy(Utils.GetTimeBCD(), 0, command, 16, 7);

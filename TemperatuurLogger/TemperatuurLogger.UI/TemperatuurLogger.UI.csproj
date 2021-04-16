@@ -15,6 +15,7 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TemperatuurLogger.Model\TemperatuurLogger.Model.csproj" />
     <ProjectReference Include="..\TemperatuurLogger.Protocol\TemperatuurLogger.Protocol.csproj" />
   </ItemGroup>
 </Project>

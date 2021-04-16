@@ -14,10 +14,11 @@ namespace TemperatuurLogger.UI.Views
 #endif
 		}
 
-		public void Next()
+		public UserControl Next()
 		{
-			this.FindControl<Carousel>("carousel").Next();
-
+			var carousel = this.FindControl<Carousel>("carousel");
+			carousel.Next();
+			return carousel.SelectedItem as UserControl;
 		}
 
 		private void InitializeComponent()

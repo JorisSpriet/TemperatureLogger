@@ -1,9 +1,9 @@
-﻿using Avalonia.Input;
+﻿using Avalonia.Controls;
 
 namespace TemperatuurLogger.UI
 {
 	public interface ICanNext
 	{
-		void Next();
+		UserControl Next();
 	}
 }

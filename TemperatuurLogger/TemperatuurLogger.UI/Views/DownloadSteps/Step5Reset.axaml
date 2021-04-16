@@ -4,5 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TemperatuurLogger.UI.Views.DownloadSteps.Step5Reset">
-  Welcome to Avalonia!
+	<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">De gegevens zijn opgeslagen en de klok is ingesteld.
+
+Haal de logger nu uit de poort</TextBlock>
 </UserControl>

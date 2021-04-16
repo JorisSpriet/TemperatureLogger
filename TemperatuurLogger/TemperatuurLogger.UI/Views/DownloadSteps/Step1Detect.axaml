@@ -3,14 +3,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TemperatuurLogger.UI.Views.DownloadSteps.Step1Detect">
+             x:Class="TemperatuurLogger.UI.Views.DownloadSteps.Step1Detect"
+			 xmlns:local="clr-namespace:TemperatuurLogger.UI.Views;assembly=TemperatuurLogger.UI">
+	<UserControl.Resources>
+		<local:IsDetectingStatusConverter x:Key="myConverter"/>
+	</UserControl.Resources>
 	<Grid ColumnDefinitions="Auto,*" RowDefinitions="1*,*,*" >
 		<Image Source="/Assets/Z230USBport.png" Grid.RowSpan="3" />
 		
 		<TextBlock Grid.Column="1" Grid.Row="1">STOP DE LOGGER IN DE ONDERSTE USB POORT</TextBlock>
 		
 		<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" >
+			<StackPanel Orientation="Vertical">
 			<TextBlock Text="{Binding DetectionStatus}" />
+			<ProgressBar IsIndeterminate="True" IsVisible="{Binding State, Converter= {StaticResource myConverter}}" />
+			</StackPanel>
 			<Panel Width="100" />
 			<Button Command="{Binding Detect}">Probeer opnieuw</Button>
 		</StackPanel>

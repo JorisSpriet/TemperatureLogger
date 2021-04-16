@@ -87,24 +87,30 @@ namespace TemperatuurLogger.Protocol
 
             var buffer = new byte[Marshal.SizeOf<T>()];
             var offset = 0;
+            var noDataCounter = 0;
 
             sw.Restart();
-            while (offset < buffer.Length) {
+            while (offset < buffer.Length || noDataCounter > 1000) {
                 //TODO 1 JS PROTECT AGAINST ENDLESS LOOP
                 var bytecount = buffer.Length - offset;
                 int r = serialPort.BaseStream.Read(buffer, offset, bytecount);
                 offset += r;
                 logger.Debug($"\treceived {r} bytes ({offset} of {buffer.Length})");
-                if (r == 0)
-                    Thread.Sleep(1);
+                if (r == 0) {
+                    Thread.Sleep(5);
+                    noDataCounter++;
+                }
+                else noDataCounter = 0;
             }
+            if (noDataCounter > 0)
+                throw new Exception("Logger antwoordt niet.  Contacteer technische dienst.");
             logger.Debug($"Received a total of {offset} bytes");
 
             var result = Utils.Map<T>(buffer);
             return result;
         }
 
-        private void GetData(DataMessageSample[] data)
+        private void GetData(DataMessageSample[] data, SamplesReadingCallback callback)
         {
             
             var messageCount = data.Length / 15;
@@ -138,6 +144,7 @@ namespace TemperatuurLogger.Protocol
                     logger.Debug($"\treceived {r} bytes ({offset} of {buffer.Length}) ({ progress:##0.##}%)");
                 if (r == 0)
                     Thread.Sleep(1);
+                DoCallback(offset, totalBytes, callback);
             }
             sw.Start();
             logger.Info($"Received a total of {offset} bytes in {sw.Elapsed}");
@@ -147,6 +154,8 @@ namespace TemperatuurLogger.Protocol
                 var srcIndex = targetIndex- (15 - rest) * Marshal.SizeOf<DataMessageSample>();
                 Array.Copy(buffer, srcIndex, buffer, targetIndex, dmts);
             }
+
+            
             
             var dataMessages = Utils.MapArray<DataMessage>(buffer);
             var c = 0;
@@ -159,7 +168,23 @@ namespace TemperatuurLogger.Protocol
                 }
             }
         }
-        private void SendQuestion(byte[] question = null)
+
+		public void SetClock()
+		{
+            WithSerialPort(() =>
+            {
+                var message = Messages.GetSetClockMessage(SerialNumber, x);
+                Get<AnswerSetClockMessage>(message);
+            });
+		}
+
+		private void DoCallback(int offset, int totalBytes, SamplesReadingCallback callback)
+		{
+            var p = Convert.ToInt32(offset * 100.0 / totalBytes);
+            callback(p, offset, totalBytes);
+		}
+
+		private void SendQuestion(byte[] question = null)
         {
             if (question?.Length > 0)
             {
@@ -178,7 +203,7 @@ namespace TemperatuurLogger.Protocol
                     GetInfoDetails1(details);
 
                     var data = new DataMessageSample[details.NumberOfSamples];
-                    GetData(data);
+                    GetData(data, samplesReadingCallback);
 
                     int sampleNumber = 1;
                     foreach (var sample in data) {
@@ -202,8 +227,8 @@ namespace TemperatuurLogger.Protocol
         {
             WithSerialPort(() =>
             {
-                Get<AnswerClearDataMessage>(Messages.GetClearDataMessage(SerialNumber, x));
-                
+                // Get<AnswerClearDataMessage>(Messages.GetClearDataMessage(SerialNumber, x));
+                SendQuestion(Messages.GetClearDataMessage(SerialNumber, x));
                 //we probably should check the answer...
             });
         }

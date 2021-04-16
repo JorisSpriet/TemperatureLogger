@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Controls;
+using Avalonia.Threading;
 using ReactiveUI;
 using System;
 using System.Reactive;
@@ -13,15 +14,44 @@ namespace TemperatuurLogger.UI.ViewModels
 		private DownloadViewModelState state;
 		private Device device;
 
-		public ReactiveCommand<ICanNext,Unit> Next { get; private set; }
+		private DeviceDetailsInfoModel deviceDetailsInfo;
+		private DeviceSample[] samples;
+
+		public ReactiveCommand<ICanNext, Unit> Next { get; private set; }
 
 		public ReactiveCommand<ICanClose, Unit> Cancel { get; private set; }
 
 		public DownloadViewModelState State
 		{
 			get => state;
-			set => this.RaiseAndSetIfChanged(ref state, value);
-					
+			set
+			{
+				this.RaiseAndSetIfChanged(ref state, value);
+				this.RaisePropertyChanged(nameof(NextActionText));
+				this.RaisePropertyChanged(nameof(CancelActionText));
+			}
+
+		}
+
+		public string CancelActionText => State == DownloadViewModelState.Done ? "Sluiten" : "Annuleren";
+		public string NextActionText
+		{
+			get
+			{
+				switch (State) {
+					case DownloadViewModelState.Detected: return "Uitlezen info";
+					case DownloadViewModelState.InfoRetrieved: return "Uitlezen logger";
+					case DownloadViewModelState.Downloaded: return "Opslaan";
+					case DownloadViewModelState.Persisted: return "Logger legen";
+					default: return "";
+				}
+			}
+		}
+
+		public DeviceDetailsInfoModel DeviceDetailsInfo
+		{
+			get => deviceDetailsInfo;
+			set => this.RaiseAndSetIfChanged(ref deviceDetailsInfo, value);
 		}
 
 		#region step 1 stuff
@@ -29,20 +59,21 @@ namespace TemperatuurLogger.UI.ViewModels
 		ObservableAsPropertyHelper<string> detectionStatus;
 		public string DetectionStatus
 		{
-			get => detectionStatus.Value;			
+			get => detectionStatus.Value;
 		}
 
 		string GetDetectionStatus()
 		{
-			switch(State) {
+			switch (State) {
 				case DownloadViewModelState.Idle: return "Logger niet gevonden.";
 				case DownloadViewModelState.Detecting: return "Logger aan het zoeken";
-				case DownloadViewModelState.Detected: return $"Logger gevonden : {device?.SerialNumber ?? "?"}";				
+				case DownloadViewModelState.Detected: return $"Logger gevonden : {device?.SerialNumber ?? "?"}";
 			}
 			return "-";
 		}
 
-		public ReactiveCommand<Unit,Unit> Detect { get; private set; }
+
+		public ReactiveCommand<Unit, Unit> Detect { get; private set; }
 
 
 		void DoDetect()
@@ -57,14 +88,15 @@ namespace TemperatuurLogger.UI.ViewModels
 
 			State = DownloadViewModelState.Detecting;
 
-			State = await Task.Run<DownloadViewModelState>(() => {
+			State = await Task.Run<DownloadViewModelState>(() =>
+			{
 
 				System.Threading.Thread.Sleep(15000);
 
 				var df = new DeviceFinder();
 				device = df.FindLoggerOnPort(DeviceFinder.DefaultPreferredPort);
-				
-				return device==null ? DownloadViewModelState.Idle : DownloadViewModelState.Detected;
+
+				return device == null ? DownloadViewModelState.Idle : DownloadViewModelState.Detected;
 			});
 			return State;
 		}
@@ -73,20 +105,26 @@ namespace TemperatuurLogger.UI.ViewModels
 
 		#region step 2 stuff
 
-		void DoRetrieveInfo()
-		{	
-			Dispatcher.UIThread.InvokeAsync(RetrieveInfo);
+		void DoRetrieveInfo(UserControl p)
+		{
+			Dispatcher.UIThread.InvokeAsync(() => RetrieveInfo(p));
 		}
 
-		async Task<DownloadViewModelState> RetrieveInfo()
+		async Task<DownloadViewModelState> RetrieveInfo(UserControl p)
 		{
 			if (State != DownloadViewModelState.RetrievingInfo)
 				throw new InvalidOperationException();
 
-			State = await Task.Run<DownloadViewModelState>(() => {
+			State = await Task.Run(() =>
+			{
 
-				var info = device.GetDetailsFromDevice();
-		
+				deviceDetailsInfo = new DeviceDetailsInfoModel(device.GetDetailsFromDevice());
+
+				Dispatcher.UIThread.InvokeAsync(() =>
+				{
+					p.DataContext = deviceDetailsInfo;
+				});
+
 				return DownloadViewModelState.InfoRetrieved;
 			});
 			return State;
@@ -95,28 +133,48 @@ namespace TemperatuurLogger.UI.ViewModels
 		#endregion
 
 		#region step 3 stuff
-		void DoDownload()
+		async Task<DownloadViewModelState> DoDownload(UserControl p)
 		{
-			//TODO 0 JS Implement DoDownload()
-			throw new NotImplementedException("DoDownload not implemented yet");
+			if (State != DownloadViewModelState.Downloading)
+				throw new InvalidOperationException();
+
+			var downloadProgressModel = new DownloadProgressViewModel();
+			p.DataContext = downloadProgressModel;
+
+			State = await Task.Run(() =>
+			{
+				samples = downloadProgressModel.DownloadSamples(device).Result;
+				return DownloadViewModelState.Downloaded;
+			});
+
+			return State;
 		}
 		#endregion
 
 		#region step 4 stuff
-		void DoPersist()
+		async Task<DownloadViewModelState> DoPersist(UserControl p)
 		{
-			//TODO 0 JS Implement DoPersist()
-			throw new NotImplementedException("DoPersist not implemented yet");
+			if (State != DownloadViewModelState.Persisting)
+				throw new InvalidOperationException();
+
+			var persistViewModel = new PersistViewModel();
+			p.DataContext = persistViewModel;
+			State = await Task.Run(() =>
+			{
+				persistViewModel.Persist(deviceDetailsInfo.SerialNumber, samples);
+				return DownloadViewModelState.Persisted;
+			});
+			return State;
 		}
 		#endregion
 
 		#region step 5 stuff
-		void DoReset()
+		DownloadViewModelState DoReset(UserControl p)
 		{
 			device.ClearDataOnDevice();
-			//TODO 0 JS Implement Device.SetClock();
-			//device.SetClock();
+			device.SetClock();
 			State = DownloadViewModelState.Done;
+			return State;
 		}
 		#endregion
 
@@ -132,6 +190,12 @@ namespace TemperatuurLogger.UI.ViewModels
 				s => s == DownloadViewModelState.Idle || s == DownloadViewModelState.Detecting || s == DownloadViewModelState.Detected)
 				.Select(b => GetDetectionStatus())
 				.ToProperty(this, vm => vm.DetectionStatus, out detectionStatus);
+
+			this.WhenAnyValue(vm => vm.State,
+				s => s == DownloadViewModelState.InfoRetrieved)
+				.Select(b => deviceDetailsInfo)
+				.ToProperty(this, vm => vm.DeviceDetailsInfo, deviceDetailsInfo);
+
 		}
 
 		void InitCommands()
@@ -139,15 +203,16 @@ namespace TemperatuurLogger.UI.ViewModels
 			//Canceling
 			var canCancel = this.WhenAnyValue(vm => vm.State, (x) => x == DownloadViewModelState.Idle ||
 				x == DownloadViewModelState.Detected ||
-				x == DownloadViewModelState.InfoRetrieved);
+				x == DownloadViewModelState.InfoRetrieved ||
+				x == DownloadViewModelState.Downloaded);
 			Cancel = ReactiveCommand.Create<ICanClose, Unit>(DoCancel, canCancel);
 
 
 			var canDetect = this.WhenAnyValue(vm => vm.State, x => x == DownloadViewModelState.Idle);
 			Detect = ReactiveCommand.Create(DoDetect, canDetect);
 
-			var canNext = this.WhenAnyValue(vm => vm.State, x =>  CanDoNext(x));
-			Next = ReactiveCommand.Create<ICanNext,Unit>(DoNext, canNext);			
+			var canNext = this.WhenAnyValue(vm => vm.State, x => CanDoNext(x));
+			Next = ReactiveCommand.Create<ICanNext, Unit>(DoNext, canNext);
 		}
 
 		bool CanDoNext(DownloadViewModelState state)
@@ -155,24 +220,26 @@ namespace TemperatuurLogger.UI.ViewModels
 			return state == DownloadViewModelState.Detected ||
 				state == DownloadViewModelState.InfoRetrieved ||
 				state == DownloadViewModelState.Downloaded ||
-				state == DownloadViewModelState.Persisted;// ||
-				//state = DownloadViewModelState.Done
+				state == DownloadViewModelState.Persisted;
 		}
 
-		void HandleStateTransition()
+		void HandleStateTransition(UserControl p)
 		{
-			switch(State) {
+			switch (State) {
 				case DownloadViewModelState.RetrievingInfo:
-					DoRetrieveInfo();
+					DoRetrieveInfo(p);
 					break;
 				case DownloadViewModelState.Downloading:
-					DoDownload();
+					DoDownload(p);
 					break;
 				case DownloadViewModelState.Persisting:
-					DoPersist();
+					DoPersist(p);
 					break;
 				case DownloadViewModelState.Resetting:
-					DoReset();
+					DoReset(p);
+					break;
+				case DownloadViewModelState.Done:
+					this.RaisePropertyChanged("CancelActionText");
 					break;
 				default:
 					throw new InvalidOperationException($"Nothing to launch when state is {State}");
@@ -182,19 +249,18 @@ namespace TemperatuurLogger.UI.ViewModels
 
 		Unit DoNext(ICanNext canNext)
 		{
-			canNext.Next();
+			var p = canNext.Next();
 
 			State = State + 1;
-			HandleStateTransition();
-
+			HandleStateTransition(p);
 
 			return Unit.Default;
 		}
 
-	
+
 		public DownloadViewModel()
 		{
-			InitConditions();			
+			InitConditions();
 
 			InitCommands();
 

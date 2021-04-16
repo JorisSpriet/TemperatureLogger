@@ -4,5 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TemperatuurLogger.UI.Views.DownloadSteps.Step4Persist">
-  Welcome to Avalonia!
+	<Grid RowDefinitions="12*,1*,Auto,Auto,3*" Margin="100 0 100 0">
+	<TextBlock Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center"><![CDATA[De data wordt opgeslagen.]]></TextBlock>
+	<ProgressBar Grid.Row="2" Minimum="0" Maximum="100" Value="{Binding Percentage}" />
+	<TextBlock Grid.Row="3" Text="{Binding PersistingProgress}" />
+	</Grid>
 </UserControl>

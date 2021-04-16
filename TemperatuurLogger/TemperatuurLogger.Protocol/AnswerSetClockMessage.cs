@@ -3,7 +3,7 @@
 namespace TemperatuurLogger.Protocol
 {
 	[StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-	public struct AnswerClearDataMessage
+	public struct AnswerSetClockMessage
 	{
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
 		public byte[] Header;
@@ -11,7 +11,7 @@ namespace TemperatuurLogger.Protocol
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
 		public byte[] SerialNumber;
 
-		//expect : 0x5a 0x01
+		//expect : 0x5c 0x01
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
 		public byte[] AnswerCode;
 
