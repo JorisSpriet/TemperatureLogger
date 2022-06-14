@@ -91,7 +91,7 @@ namespace TemperatuurLogger.UI.ViewModels
 			State = await Task.Run<DownloadViewModelState>(() =>
 			{
 
-				System.Threading.Thread.Sleep(15000);
+				//System.Threading.Thread.Sleep(15000);
 
 				var df = new DeviceFinder();
 				device = df.FindLoggerOnPort(DeviceFinder.DefaultPreferredPort);
@@ -204,7 +204,8 @@ namespace TemperatuurLogger.UI.ViewModels
 			var canCancel = this.WhenAnyValue(vm => vm.State, (x) => x == DownloadViewModelState.Idle ||
 				x == DownloadViewModelState.Detected ||
 				x == DownloadViewModelState.InfoRetrieved ||
-				x == DownloadViewModelState.Downloaded);
+				x == DownloadViewModelState.Downloaded ||
+				x == DownloadViewModelState.Done);
 			Cancel = ReactiveCommand.Create<ICanClose, Unit>(DoCancel, canCancel);
 
 

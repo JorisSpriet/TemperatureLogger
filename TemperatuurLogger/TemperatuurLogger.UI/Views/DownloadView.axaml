@@ -3,20 +3,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
-		Height="500" Width="800" CanResize="False" SystemDecorations="BorderOnly" BorderThickness="5" BorderBrush="DarkBlue"
-		Background="LightCyan"
+		Height="500" Width="800" BorderThickness="5" BorderBrush="DarkBlue" WindowStartupLocation="CenterOwner"
         x:Class="TemperatuurLogger.UI.Views.DownloadView"
 		xmlns:steps="using:TemperatuurLogger.UI.Views.DownloadSteps"
-        Title="DownloadView">
-	
-	<Grid>
-		<Grid ColumnDefinitions="4*,10*,4*" RowDefinitions="Auto,Auto">
+        Title="DownloadView" 
+		CanResize="False"
+		HasSystemDecorations="False"
+		Topmost="True"
+		WindowState="Maximized">
+		
+		<Grid ColumnDefinitions="3*,10*,3*" RowDefinitions="80,*,80" ShowGridLines="True">
 			<!--
 			<Button x:Name="previous"  Grid.Row="1" Name="left" VerticalAlignment="Center" Padding="20" Margin="5" IsEnabled="False">
 				<Path Data="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" Fill="Black"/>
 			</Button>
 			-->
-			<Carousel x:Name="carousel" Grid.ColumnSpan="3" Name="carousel" Width="800" Height="400" >
+			<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontFamily="Comic Sans MS" Foreground="Green" FontSize="36" HorizontalAlignment="Center">DOWNLOADEN TEMPERATUREN</TextBlock>
+			
+			<Carousel x:Name="carousel" Grid.Row="1" Grid.ColumnSpan="3" Name="carousel" Background="Red" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Stretch">
 				<steps:Step1Detect />
 				<steps:Step2ShowInfo DataContext="{Binding DeviceDetailsInfo}" />
 				<steps:Step3Download/>
@@ -25,13 +29,14 @@
 				<steps:Step6Done/>
 			</Carousel>
 
+			<Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
 			<Button x:Name="cancel" Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Stretch" Margin="5"
-					Command="{Binding Cancel}"
+					Command="{Binding Cancel}" MinWidth="100" MinHeight="55"
 					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
 					Content="{Binding CancelActionText}" />
 
-			<Button Grid.Row="1" Grid.Column="2" Name="right" VerticalAlignment="Stretch" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="5"
-					Command="{Binding Next}"
+			<Button Grid.Row="1" Grid.Column="2" Name="right" VerticalAlignment="Stretch" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="5" 
+					Command="{Binding Next}" MinWidth="100"
 					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
 					Content ="{Binding NextActionText}"/>
 		</Grid>

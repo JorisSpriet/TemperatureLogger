@@ -10,7 +10,7 @@ namespace TemperatuurLogger.ImportLogp
     /// Maps to binary structure of logp file produced by tool.
     /// </summary> 
 	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-	internal struct LogpFileItem	
+	public struct LogpFileItem	
 	{		
 		[MarshalAs(UnmanagedType.ByValArray,SizeConst = 14)]
 		public byte[]  DateTime; //yyyyMMddHHmmss

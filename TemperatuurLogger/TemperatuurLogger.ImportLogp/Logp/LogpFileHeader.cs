@@ -6,7 +6,7 @@ namespace TemperatuurLogger.ImportLogp
     /// Maps to binary structure of logp file produced by tool.
     /// </summary>    
 	[StructLayout(LayoutKind.Sequential,Pack=1)]
-	internal struct LogpFileHeader
+	public struct LogpFileHeader
 	{
 		#pragma warning disable 1591
 		public const int Length = 60;

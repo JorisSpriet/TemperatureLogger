@@ -2,24 +2,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="800"
              x:Class="TemperatuurLogger.UI.Views.DownloadSteps.Step1Detect"
 			 xmlns:local="clr-namespace:TemperatuurLogger.UI.Views;assembly=TemperatuurLogger.UI">
 	<UserControl.Resources>
 		<local:IsDetectingStatusConverter x:Key="myConverter"/>
 	</UserControl.Resources>
-	<Grid ColumnDefinitions="Auto,*" RowDefinitions="1*,*,*" >
-		<Image Source="/Assets/Z230USBport.png" Grid.RowSpan="3" />
-		
-		<TextBlock Grid.Column="1" Grid.Row="1">STOP DE LOGGER IN DE ONDERSTE USB POORT</TextBlock>
-		
-		<StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" >
-			<StackPanel Orientation="Vertical">
-			<TextBlock Text="{Binding DetectionStatus}" />
-			<ProgressBar IsIndeterminate="True" IsVisible="{Binding State, Converter= {StaticResource myConverter}}" />
-			</StackPanel>
-			<Panel Width="100" />
-			<Button Command="{Binding Detect}">Probeer opnieuw</Button>
-		</StackPanel>
+	<Grid ColumnDefinitions="30,Auto,Auto,30" RowDefinitions="*,Auto,Auto,*" ShowGridLines="False" >
+		<TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontFamily="Comic Sans MS" FontSize="24" Foreground="Green"
+				   HorizontalAlignment="Center" VerticalAlignment="Center"> STOP DE LOGGER IN DE ONDERSTE USB POORT</TextBlock>
+		<Image Grid.Row="2" Grid.Column="1" Source="/Assets/usbport.png" Grid.RowSpan="2" />
+
+		<Grid Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" RowDefinitions="*,Auto,Auto,Auto,*" >
+			
+				<TextBlock Grid.Row="1" Text="{Binding DetectionStatus}" Margin="5" />
+				<ProgressBar Grid.Row="2" IsIndeterminate="True" IsVisible="{Binding State, Converter= {StaticResource myConverter}}" />
+				
+			<Border Grid.Row="3" BorderThickness="2" BorderBrush="Red" CornerRadius="5" >
+				<Button Command="{Binding Detect}" FontFamily="Comic Sans MS" FontSize="24" >Probeer opnieuw</Button>
+			</Border>
+		</Grid>
 	</Grid>
 </UserControl>

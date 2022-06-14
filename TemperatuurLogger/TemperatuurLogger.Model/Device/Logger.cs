@@ -18,6 +18,9 @@ namespace TemperatuurLogger.Model
         [Field(Length=20)]
         public string SerialNumber { get; private set;}
 
+        [Field, Association(PairTo = "Logger", OnOwnerRemove = OnRemoveAction.Cascade, OnTargetRemove = OnRemoveAction.Deny)]
+        public EntitySet<MeasurementDownload> Downloads { get; private set; }
+
         [Field]
         public DateTime DateOfPurchase { get; set;}
 
