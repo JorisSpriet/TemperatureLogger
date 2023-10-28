@@ -8,9 +8,9 @@ namespace TemperatuurLogger.ImportLogp
 	/// <summary>
     /// Processes logp file for storage into database.
     /// </summary>
-	internal class Importer
+	public class Importer
 	{
-		internal LogpFile Import(string fileName)
+		public LogpFile Import(string fileName)
 		{
 			var items = new List<LogpFileItem>();
             LogpFileHeader lfh;

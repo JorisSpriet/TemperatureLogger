@@ -4,7 +4,7 @@ namespace TemperatuurLogger.ImportLogp
     /// <summary>
     /// Decoded logp file.
     /// </summary>
-    class LogpFile
+    public class LogpFile
     {
         #pragma warning disable 1591
         public LogpFileHeader Header { get; set; }

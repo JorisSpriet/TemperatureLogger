@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
+        x:Class="TemperatuurLogger.UI.Views.ReportView"
+		xmlns:steps="using:TemperatuurLogger.UI.Views.ReportSteps"
+		Height="500" Width="800" CanResize="False" SystemDecorations="BorderOnly" BorderThickness="5" BorderBrush="DarkBlue" WindowStartupLocation="CenterOwner"
+		Background="LightCyan"
+        Title="ReportView">
+	<Grid ColumnDefinitions="1*,3*,3*,1*" RowDefinitions="1*,1*,6*,1*,1*">
+		<TextBlock FontSize="20" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 15 0 0 ">RAPPORTERING</TextBlock>
+
+		<Carousel x:Name="carousel" Grid.ColumnSpan="3" Name="carousel" Height="400" Margin="5">
+			<steps:Step1CriteriaEntry DataContext="{Binding ReportCriteriaViewModel}" />
+			<steps:Step2ReportPlot />
+			<steps:Step3Done/>
+		</Carousel>
+
+		<Button Grid.Row="4" Grid.Column="1"
+				Command="{Binding CloseCommand}"
+				CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+				Content="Annuleren}" />
+
+		<Button Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right"
+				Command="{Binding NextStepCommand}"
+				CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
+				Content="{Binding NextStepButtonText}" />
+		
+		
+	</Grid>
+</Window>
