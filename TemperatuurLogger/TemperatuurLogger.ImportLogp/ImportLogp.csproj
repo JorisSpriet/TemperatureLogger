@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="system.commandline.dragonfruit" Version="0.3.0-alpha.20574.7" />
-    <PackageReference Include="Xtensive.Orm" Version="6.0.4" />
-    <PackageReference Include="Xtensive.Orm.Sqlite" Version="6.0.4" />
+    <PackageReference Include="Xtensive.Orm" Version="6.0.12" />
+    <PackageReference Include="Xtensive.Orm.Sqlite" Version="6.0.12" />
   </ItemGroup>
 
   <ItemGroup>

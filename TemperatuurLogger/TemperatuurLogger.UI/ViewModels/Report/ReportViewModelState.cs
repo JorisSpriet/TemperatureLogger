@@ -3,32 +3,23 @@
 	public enum ReportViewModelState : int
 	{
 		/// <summary>
-		/// Data Entry
+		/// Data entry: user must select a logger and from/to date
 		/// </summary>
 		DataEntry = 0,
+
+        /// <summary>
+        /// A logger and a from/to date is selected.
+        /// </summary>
+        DataEntered=1,
+
 		/// <summary>
-		/// Scanning for serial ports, and trying to find the logger
+		/// Logger and time period was selected. User can select target file dir and name.
 		/// </summary>
-		DataValidated = 1,
-		/// <summary>
-		/// Found logger; triggers transition to step 2
+		ReportGeneration = 2,
+        ReportGenerating = 3,
+				/// <summary>
+		/// Done.
 		/// </summary>
-		Rendering = 2,
-		/// <summary>
-		/// Getting info from the logger
-		/// </summary>
-		Rendered = 3,
-		/// <summary>
-		/// Showing the info
-		/// </summary>
-		Printing = 4,
-		/// <summary>
-		/// Downloading from the logger
-		/// </summary>
-		Printed = 5,
-		/// <summary>
-		/// Report done
-		/// </summary>
-		Done = 6,
+		Done = 4,
 	}
 }

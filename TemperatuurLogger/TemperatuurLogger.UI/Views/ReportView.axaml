@@ -5,27 +5,43 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
         x:Class="TemperatuurLogger.UI.Views.ReportView"
 		xmlns:steps="using:TemperatuurLogger.UI.Views.ReportSteps"
-		Height="500" Width="800" CanResize="False" SystemDecorations="BorderOnly" BorderThickness="5" BorderBrush="DarkBlue" WindowStartupLocation="CenterOwner"
+		Height="500" Width="800" CanResize="False" SystemDecorations="BorderOnly" BorderThickness="5" BorderBrush="DarkBlue" WindowState="Maximized"
 		Background="LightCyan"
         Title="ReportView">
-	<Grid ColumnDefinitions="1*,3*,3*,1*" RowDefinitions="1*,1*,6*,1*,1*">
-		<TextBlock FontSize="20" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 15 0 0 ">RAPPORTERING</TextBlock>
+	<Grid ColumnDefinitions="3*,10*,3*" RowDefinitions="80,*,120">
+		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontFamily="Comic Sans MS" Foreground="Green" FontSize="36" HorizontalAlignment="Center">RAPPORTERING</TextBlock>
 
-		<Carousel x:Name="carousel" Grid.ColumnSpan="3" Name="carousel" Height="400" Margin="5">
-			<steps:Step1CriteriaEntry DataContext="{Binding ReportCriteriaViewModel}" />
-			<steps:Step2ReportPlot />
+		<Carousel x:Name="carousel" Grid.Row="1" Grid.Column="1" Name="carousel" Background="Red" Margin="5" >
+			<steps:Step1CriteriaEntry />
+			<steps:Step2ReportCreation />
 			<steps:Step3Done/>
 		</Carousel>
 
-		<Button Grid.Row="4" Grid.Column="1"
-				Command="{Binding CloseCommand}"
-				CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-				Content="Annuleren}" />
+		<Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="3*,3*,4*,3*" RowDefinitions="*,Auto" ShowGridLines="True">
+			<TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Margin="10" Text="{Binding CancelActionText}"/>
+			<Border Grid.Row="2" Grid.Column="1" BorderThickness="5" CornerRadius="15" BorderBrush="Teal" Margin="5">
+				<Button x:Name="cancel"   VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Stretch" Margin="5"
+						Command="{Binding Cancel}" MinWidth="100" MinHeight="55"
+						CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+						BorderBrush="Transparent">
+					<Panel Width="200" Height="200">
+						<Image Source="/Assets/cancel.png" Height="120" Stretch="Uniform" />
+					</Panel>
+				</Button>
+			</Border>
 
-		<Button Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right"
-				Command="{Binding NextStepCommand}"
-				CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
-				Content="{Binding NextStepButtonText}" />
+			<TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center" Margin="10" Text="{Binding NextActionText}" />
+			<Border Grid.Row="2" Grid.Column="3" BorderThickness="5" CornerRadius="15" BorderBrush="Teal" Margin="5">
+
+				<Button  Name="right" VerticalAlignment="Stretch" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="5"
+					Command="{Binding Next}" MinWidth="100"
+					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" >
+					<Panel Width="200" Height="200">
+						<Image Source="/Assets/continue.png" Height="120" />
+					</Panel>
+				</Button>
+			</Border>
+		</Grid>
 		
 		
 	</Grid>

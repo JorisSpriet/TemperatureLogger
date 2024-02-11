@@ -5,8 +5,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\usbport.png" />
@@ -16,16 +20,18 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
-    <PackageReference Include="ScottPlot" Version="4.1.12-beta" />
-    <PackageReference Include="ScottPlot.Avalonia" Version="4.1.12-beta" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TemperatuurLogger.Model\TemperatuurLogger.Model.csproj" />
     <ProjectReference Include="..\TemperatuurLogger.Protocol\TemperatuurLogger.Protocol.csproj" />
+    <ProjectReference Include="..\TemperatuurLogger.Services\TemperatuurLogger.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\ReportSteps\Step1CriteriaEntry.axaml.cs">
       <DependentUpon>Step1CriteriaEntry.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ReportSteps\Step2ReportCreation.axaml.cs">
+      <DependentUpon>Step2ReportCreation.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>

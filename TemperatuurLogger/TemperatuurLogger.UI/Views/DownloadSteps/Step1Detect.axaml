@@ -6,19 +6,20 @@
              x:Class="TemperatuurLogger.UI.Views.DownloadSteps.Step1Detect"
 			 xmlns:local="clr-namespace:TemperatuurLogger.UI.Views;assembly=TemperatuurLogger.UI">
 	<UserControl.Resources>
-		<local:IsDetectingStatusConverter x:Key="myConverter"/>
+		<local:IsDetectingStatusConverter x:Key="detectingConverter"/>
+		<local:IsDetectedStatusConverter x:Key="detectedConverter"/>
 	</UserControl.Resources>
 	<Grid ColumnDefinitions="30,Auto,Auto,30" RowDefinitions="*,Auto,Auto,*" ShowGridLines="False" >
 		<TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontFamily="Comic Sans MS" FontSize="24" Foreground="Green"
-				   HorizontalAlignment="Center" VerticalAlignment="Center"> STOP DE LOGGER IN DE ONDERSTE USB POORT</TextBlock>
+				   HorizontalAlignment="Center" VerticalAlignment="Center"> STOP DE LOGGER IN DE RECHTSE USB POORT</TextBlock>
 		<Image Grid.Row="2" Grid.Column="1" Source="/Assets/usbport.png" Grid.RowSpan="2" />
 
 		<Grid Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" RowDefinitions="*,Auto,Auto,Auto,*" >
 			
 				<TextBlock Grid.Row="1" Text="{Binding DetectionStatus}" Margin="5" />
-				<ProgressBar Grid.Row="2" IsIndeterminate="True" IsVisible="{Binding State, Converter= {StaticResource myConverter}}" />
+				<ProgressBar Grid.Row="2" IsIndeterminate="True" IsVisible="{Binding State, Converter= {StaticResource detectingConverter}}" />
 				
-			<Border Grid.Row="3" BorderThickness="2" BorderBrush="Red" CornerRadius="5" >
+			<Border Grid.Row="3" BorderThickness="2" BorderBrush="Red" CornerRadius="5" IsVisible="{Binding State, Converter= {StaticResource detectedConverter}}" >
 				<Button Command="{Binding Detect}" FontFamily="Comic Sans MS" FontSize="24" >Probeer opnieuw</Button>
 			</Border>
 		</Grid>

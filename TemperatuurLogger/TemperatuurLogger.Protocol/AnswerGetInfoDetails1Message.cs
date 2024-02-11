@@ -30,7 +30,7 @@ namespace TemperatuurLogger.Protocol
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
 		public byte[] Unknown2;
 
-		public short NumberOfSamples;
+		public ushort NumberOfSamples;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] 
 		public byte[] Unknown3;

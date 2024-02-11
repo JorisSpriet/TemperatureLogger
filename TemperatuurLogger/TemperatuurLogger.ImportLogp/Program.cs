@@ -13,7 +13,7 @@ namespace TemperatuurLogger.ImportLogp
             var i = new Importer();
             var data = i.Import(logpFile);
 
-            var domain = DomainBuilder.BuildDomain(create);
+            var domain = DomainBuilder.BuildDomain(create:create);
             try
             {
                 using (var session = domain.OpenSession())

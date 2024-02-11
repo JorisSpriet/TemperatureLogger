@@ -2,20 +2,14 @@
 using ReactiveUI;
 using System.Reactive;
 using Avalonia.Controls;
+using TemperatuurLogger.Services;
 
 namespace TemperatuurLogger.UI.ViewModels
 {
-	public class ReportViewModel : ViewModelBase
-	{
+	public partial class ReportViewModel : DatabaseBoundViewModelBase
+    {
 		ReportViewModelState state;
-		ReportCriteriaViewModel reportCriteriaViewModel;
-
-		public ReportCriteriaViewModel ReportCriteriaViewModel
-		{
-			get => reportCriteriaViewModel;
-			set => this.RaiseAndSetIfChanged(ref reportCriteriaViewModel, value);
-		}
-
+		
 		public ReactiveCommand<ICanNext, Unit> Next { get; private set; }
 
 		public ReactiveCommand<ICanClose, Unit> Cancel { get; private set; }
@@ -38,9 +32,10 @@ namespace TemperatuurLogger.UI.ViewModels
 			get
 			{
 				switch (State) {
-					case ReportViewModelState.DataValidated: return "Genereren";
-					case ReportViewModelState.Rendered: return "Printen";
-					default: return "";
+                    case ReportViewModelState.DataEntry: return "Gebruik";
+					case ReportViewModelState.ReportGeneration: return "Genereren";
+					case ReportViewModelState.ReportGenerating: return "Opslaan";
+					default: return "Verder";
 				}
 			}
 		}
@@ -55,19 +50,11 @@ namespace TemperatuurLogger.UI.ViewModels
 
 		private void DoCriteriaEntry()
 		{
-			ReportCriteriaViewModel = new ReportCriteriaViewModel();
-			ReportCriteriaViewModel.LoggerSelected += (s, e) => { State = ReportViewModelState.DataValidated; };
+			LoggerSelected += (s, e) => { State = ReportViewModelState.DataEntered; };
+            GetLoggers();
 		}
 
-		private void DoRender(UserControl p)
-		{
-			var reportPlotViewModel = new ReportPlotViewModel();
-			reportPlotViewModel.FromDate = reportCriteriaViewModel.FromDate;
-			reportPlotViewModel.EndDate = reportCriteriaViewModel.EndDate;
-			reportPlotViewModel.SelectedLogger = reportCriteriaViewModel.SelectedLogger;
-			p.DataContext = reportPlotViewModel;
-			reportPlotViewModel.Plotter = p as ICanPlot;
-		}
+		
 
 		#endregion
 
@@ -85,26 +72,20 @@ namespace TemperatuurLogger.UI.ViewModels
 
 		bool CanDoNext(ReportViewModelState state)
 		{
-			return state == ReportViewModelState.DataValidated||
-				state == ReportViewModelState.Rendered ||
-				state == ReportViewModelState.Printed ||
-				state == ReportViewModelState.Done;
+			return state == ReportViewModelState.DataEntered||
+				state == ReportViewModelState.ReportGeneration;
 		}
 
 		void HandleStateTransition(UserControl p)
 		{
 			switch (State) {
-				case ReportViewModelState.Rendering:					
-					DoRender(p);
+				case ReportViewModelState.ReportGeneration:					
+					ChooseDestination();
 					break;
-				case ReportViewModelState.Rendered:
-					//DoPrint(p, reportCriteriaViewModel);
-					break;
-				case ReportViewModelState.Printed:
-					//DoPersist(p);
-					break;
-				case ReportViewModelState.Done:
-					//this.RaisePropertyChanged("CancelActionText");
+				case ReportViewModelState.ReportGenerating:
+                    DoRender(p);
+                    break;				
+				case ReportViewModelState.Done:					
 					break;
 				default:
 					throw new InvalidOperationException($"Nothing to launch when state is {State}");

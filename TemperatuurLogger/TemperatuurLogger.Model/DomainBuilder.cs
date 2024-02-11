@@ -10,13 +10,15 @@ namespace TemperatuurLogger.Model
         static bool built;
         static Domain domain;
 
-        public static Domain BuildDomain(bool create = false)
+        public static Domain Domain => domain;
+
+        public static Domain BuildDomain(string dbDirectory = null, string dbFileName="Temperatuurlogger.db3", bool create = false)
         {
             if (built)
                 return domain;
 
-            var userDir = Utils.GetUserProfilePath();
-            var dataFile = Path.Combine(userDir, "Temperatuurlogger.db3");
+            var userDir = dbDirectory ?? Utils.GetUserProfilePath();
+            var dataFile = Path.Combine(userDir, dbFileName);
 
             if(create && File.Exists(dataFile)) {
                 throw new InvalidOperationException($"Asked to create, but file '{dataFile}' exists !");

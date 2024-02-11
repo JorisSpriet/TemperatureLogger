@@ -29,7 +29,7 @@ namespace TemperatuurLogger.UI.ViewModels
 			lock (sync) {
 				if (domain != null)
 					return;
-				domain = DomainBuilder.BuildDomain();
+				domain = DomainBuilder.Domain ?? DomainBuilder.BuildDomain();
 			}
 		}
 
