@@ -2,16 +2,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:TemperatuurLogger.UI.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="500"
         x:Class="TemperatuurLogger.UI.Views.ReportView"
 		xmlns:steps="using:TemperatuurLogger.UI.Views.ReportSteps"
-		Height="500" Width="800" CanResize="False" SystemDecorations="BorderOnly" BorderThickness="5" BorderBrush="DarkBlue" WindowState="Maximized"
-		Background="LightCyan"
-        Title="ReportView">
-	<Grid ColumnDefinitions="3*,10*,3*" RowDefinitions="80,*,120">
+		Design.Width="1024"
+		Design.Height="800"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Rapport creatie"
+		CanResize="False"
+		Topmost="True"
+		ShowInTaskbar="False"
+		SystemDecorations="None"
+		WindowState="Maximized">
+
+	<Design.DataContext>
+		<vm:ReportViewModel/>
+	</Design.DataContext>
+	
+	<Grid ColumnDefinitions="3*,10*,3*" RowDefinitions="Auto,5*,2*" ShowGridLines="True">
 		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontFamily="Comic Sans MS" Foreground="Green" FontSize="36" HorizontalAlignment="Center">RAPPORTERING</TextBlock>
 
-		<Carousel x:Name="carousel" Grid.Row="1" Grid.Column="1" Name="carousel" Background="Red" Margin="5" >
+		<Carousel x:Name="carousel" Grid.Row="1" Grid.Column="1" Name="carousel" Margin="5" >
 			<steps:Step1CriteriaEntry />
 			<steps:Step2ReportCreation />
 			<steps:Step3Done/>
@@ -42,7 +54,7 @@
 				</Button>
 			</Border>
 		</Grid>
-		
-		
+
+
 	</Grid>
 </Window>

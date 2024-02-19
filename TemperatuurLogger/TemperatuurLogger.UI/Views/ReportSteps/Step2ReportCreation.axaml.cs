@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace TemperatuurLogger.UI.Views.ReportSteps
 {
-	public class Step2ReportCreation : UserControl//, ICanPlot
+	public partial class Step2ReportCreation : UserControl//, ICanPlot
 	{
 
 		public Step2ReportCreation()

@@ -20,7 +20,8 @@
 				<ProgressBar Grid.Row="2" IsIndeterminate="True" IsVisible="{Binding State, Converter= {StaticResource detectingConverter}}" />
 				
 			<Border Grid.Row="3" BorderThickness="2" BorderBrush="Red" CornerRadius="5" IsVisible="{Binding State, Converter= {StaticResource detectedConverter}}" >
-				<Button Command="{Binding Detect}" FontFamily="Comic Sans MS" FontSize="24" >Probeer opnieuw</Button>
+				<Button Command="{Binding Detect}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" 
+						FontFamily="Comic Sans MS" FontSize="24" FontWeight="ExtraBold" >Probeer opnieuw</Button>
 			</Border>
 		</Grid>
 	</Grid>

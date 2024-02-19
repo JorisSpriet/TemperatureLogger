@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace TemperatuurLogger.UI.Views
 {
-	public class MainWindow : Window, IWindow
+	public partial class MainAppWindow : Window, IWindow
 	{
-		public MainWindow()
+		public MainAppWindow()
 		{
 			InitializeComponent();
 #if DEBUG

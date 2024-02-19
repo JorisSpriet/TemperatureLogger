@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace TemperatuurLogger.UI.Views.DownloadSteps
 {
-	public class Step6Done : UserControl
+	public partial class Step6Done : UserControl
 	{
 		public Step6Done()
 		{

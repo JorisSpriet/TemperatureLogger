@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
@@ -14,12 +15,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\usbport.png" />
+    <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
+    <PackageReference Include="Avalonia" Version="11.0.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.9" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.9" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.9" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TemperatuurLogger.Model\TemperatuurLogger.Model.csproj" />
@@ -27,6 +30,9 @@
     <ProjectReference Include="..\TemperatuurLogger.Services\TemperatuurLogger.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\MainAppWindow.axaml.cs">
+      <DependentUpon>MainAppWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ReportSteps\Step1CriteriaEntry.axaml.cs">
       <DependentUpon>Step1CriteriaEntry.axaml</DependentUpon>
     </Compile>

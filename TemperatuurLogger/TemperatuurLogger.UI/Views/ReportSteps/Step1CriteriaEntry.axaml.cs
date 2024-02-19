@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace TemperatuurLogger.UI.Views.ReportSteps
 {
-	public class Step1CriteriaEntry : UserControl
+	public partial class Step1CriteriaEntry : UserControl
 	{
 		public Step1CriteriaEntry()
 		{

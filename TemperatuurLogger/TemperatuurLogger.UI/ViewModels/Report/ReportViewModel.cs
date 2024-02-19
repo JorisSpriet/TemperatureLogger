@@ -2,113 +2,127 @@
 using ReactiveUI;
 using System.Reactive;
 using Avalonia.Controls;
-using TemperatuurLogger.Services;
 
 namespace TemperatuurLogger.UI.ViewModels
 {
-	public partial class ReportViewModel : DatabaseBoundViewModelBase
+    public partial class ReportViewModel : DatabaseBoundViewModelBase
     {
-		ReportViewModelState state;
-		
-		public ReactiveCommand<ICanNext, Unit> Next { get; private set; }
+        ReportViewModelState state;
 
-		public ReactiveCommand<ICanClose, Unit> Cancel { get; private set; }
+        public ReactiveCommand<ICanNext, Unit> Next { get; private set; }
 
-		public ReportViewModelState State
-		{
-			get => state;
-			set
-			{
-				this.RaiseAndSetIfChanged(ref state, value);
-				this.RaisePropertyChanged(nameof(NextActionText));
-				this.RaisePropertyChanged(nameof(CancelActionText));
-			}
+        public ReactiveCommand<ICanClose, Unit> Cancel { get; private set; }
 
-		}
+        public ReportViewModelState State
+        {
+            get => state;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref state, value);
+                this.RaisePropertyChanged(nameof(NextActionText));
+                this.RaisePropertyChanged(nameof(CancelActionText));
+            }
 
-		public string CancelActionText => State == ReportViewModelState.Done ? "Sluiten" : "Annuleren";
-		public string NextActionText
-		{
-			get
-			{
-				switch (State) {
+        }
+
+        public string CancelActionText => "Annuleren";
+        public string NextActionText
+        {
+            get
+            {
+                switch (State)
+                {
                     case ReportViewModelState.DataEntry: return "Gebruik";
-					case ReportViewModelState.ReportGeneration: return "Genereren";
-					case ReportViewModelState.ReportGenerating: return "Opslaan";
-					default: return "Verder";
-				}
-			}
-		}
+                    case ReportViewModelState.ReportGeneration: return "Genereren";
+                    case ReportViewModelState.ReportGenerating: return "Opslaan";
+                    default: return "Verder";
+                }
+            }
+        }
 
-		private Unit DoCancel(ICanClose view)
-		{
-			view?.Close();
-			return Unit.Default;
-		}
+        private Unit DoCancel(ICanClose view)
+        {
+            view?.Close();
+            return Unit.Default;
+        }
 
-		#region Actions
+        #region Actions
 
-		private void DoCriteriaEntry()
-		{
-			LoggerSelected += (s, e) => { State = ReportViewModelState.DataEntered; };
+        private void DoCriteriaEntry()
+        {
+            LoggerSelected += (s, e) => { State = ReportViewModelState.DataEntered; };
             GetLoggers();
-		}
-
-		
-
-		#endregion
+        }
 
 
-		void InitCommands()
-		{
-			//Canceling
-			var canCancel = this.WhenAnyValue(vm => vm.State, (x) => x != ReportViewModelState.Done);
-			Cancel = ReactiveCommand.Create<ICanClose, Unit>(DoCancel, canCancel);
 
-			//Moving on
-			var canNext = this.WhenAnyValue(vm => vm.State, x => CanDoNext(x));
-			Next = ReactiveCommand.Create<ICanNext, Unit>(DoNext, canNext);
-		}		
+        #endregion
 
-		bool CanDoNext(ReportViewModelState state)
-		{
-			return state == ReportViewModelState.DataEntered||
-				state == ReportViewModelState.ReportGeneration;
-		}
 
-		void HandleStateTransition(UserControl p)
-		{
-			switch (State) {
-				case ReportViewModelState.ReportGeneration:					
-					ChooseDestination();
-					break;
-				case ReportViewModelState.ReportGenerating:
+        void InitCommands()
+        {
+            //Canceling
+            var canCancel = this.WhenAnyValue(vm => vm.State, (x) => x != ReportViewModelState.Done);
+            Cancel = ReactiveCommand.Create<ICanClose, Unit>(DoCancel, canCancel);
+
+            //Moving on
+            var canNext = this.WhenAnyValue(vm => vm.State, x => CanDoNext(x));
+            Next = ReactiveCommand.Create<ICanNext, Unit>(DoNext, canNext);
+        }
+
+        bool CanDoNext(ReportViewModelState state)
+        {
+            return state == ReportViewModelState.DataEntered ||
+                state == ReportViewModelState.ReportGeneration ||
+                state == ReportViewModelState.Done;
+        }
+
+        void HandleStateTransition(UserControl p)
+        {
+            switch (State)
+            {
+                case ReportViewModelState.ReportGeneration:
+                    ChooseDestination();
+                    break;
+                case ReportViewModelState.ReportGenerating:
                     DoRender(p);
-                    break;				
-				case ReportViewModelState.Done:					
-					break;
-				default:
-					throw new InvalidOperationException($"Nothing to launch when state is {State}");
-			}
-		}
+                    break;
+                case ReportViewModelState.Done:
+                    DoEnd();
+                    break;
+                default:
+                    throw new InvalidOperationException($"Nothing to launch when state is {State}");
+            }
+        }
+
+        private void DoEnd()
+        {
+            this.RaisePropertyChanged("CancelActionText");
+        }
 
 
-		Unit DoNext(ICanNext canNext)
-		{
-			var p = canNext.Next();
+        Unit DoNext(ICanNext canNext)
+        {
+            if (State == ReportViewModelState.Done)
+            {
+                DoCancel(canNext as ICanClose);
+            }
+            else
+            {
+                var p = canNext.Next();
 
-			State = State + 1;
-			HandleStateTransition(p);
+                State = State + 1;
+                HandleStateTransition(p);
+            }
+            return Unit.Default;
+        }
 
-			return Unit.Default;
-		}
+        public ReportViewModel()
+        {
 
-		public ReportViewModel()
-		{
+            InitCommands();
 
-			InitCommands();
-
-			DoCriteriaEntry();
-		}		
-	}
+            DoCriteriaEntry();
+        }
+    }
 }

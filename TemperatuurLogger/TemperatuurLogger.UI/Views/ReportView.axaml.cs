@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace TemperatuurLogger.UI.Views
 {
-	public class ReportView : Window, ICanClose, ICanNext
+	public partial class ReportView : Window, ICanClose, ICanNext
 	{
 		public ReportView()
 		{

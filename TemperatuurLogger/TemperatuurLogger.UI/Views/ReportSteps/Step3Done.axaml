@@ -4,5 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TemperatuurLogger.UI.Views.ReportSteps.Step3Done">
-  Welcome to Avalonia!
+	<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" 
+			   Text="Het rapport werd gegenereerd !" 
+			    FontFamily="Comic Sans MS" Foreground="Green" FontSize="36"
+			   />
+
 </UserControl>

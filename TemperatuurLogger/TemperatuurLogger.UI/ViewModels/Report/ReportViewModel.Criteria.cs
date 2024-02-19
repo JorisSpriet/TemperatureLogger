@@ -36,8 +36,10 @@ namespace TemperatuurLogger.UI.ViewModels
                 if(value < LoggerFromDate.Date)
                     throw new ArgumentOutOfRangeException($"Enkel metinging vanaf {LoggerFromDate.ToString("dd\\/MM\\/yyyy")}");
                 this.RaiseAndSetIfChanged(ref fromDate, value);
+               this.RaisePropertyChanged(nameof(FromDateText));
             }
 		}
+        public string FromDateText => $"Van :{fromDate.ToString("dd-MM-yyyy")}";
 
         public DateTime LoggerEndDate
         {
@@ -56,8 +58,11 @@ namespace TemperatuurLogger.UI.ViewModels
                 if(value>LoggerEndDate)
                     throw new ArgumentOutOfRangeException($"Enkel metingen tem {LoggerEndDate.ToString("dd\\/MM\\/yyyy")}");
                 this.RaiseAndSetIfChanged(ref endDate, value);
+                this.RaisePropertyChanged(nameof(EndDateText));
             }
 		}
+
+        public string EndDateText => $"Tot :{endDate.ToString("dd-MM-yyyy")}";
 
 		public LoggerReportSourceModel SelectedLogger
 		{

@@ -1,3 +1,5 @@
+using Avalonia;
+using Avalonia.Controls;
 using ReactiveUI;
 using System.Reactive;
 using TemperatuurLogger.UI.Views;

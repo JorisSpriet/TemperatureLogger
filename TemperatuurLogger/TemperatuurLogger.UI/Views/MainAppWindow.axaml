@@ -4,15 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="TemperatuurLogger.UI.Views.MainWindow"
+        x:Class="TemperatuurLogger.UI.Views.MainAppWindow"
 		x:Name="MainWindow"
 		Design.Width="1024"
 		Design.Height="800"
         Icon="/Assets/avalonia-logo.ico"
         Title="Apotheek Sigrid Saelens BV"
-		CanResize="False"
-		HasSystemDecorations="False"
+		CanResize="False"		
 		Topmost="True"
+		SystemDecorations="None"
 		WindowState="Maximized">
 
 	<Design.DataContext>

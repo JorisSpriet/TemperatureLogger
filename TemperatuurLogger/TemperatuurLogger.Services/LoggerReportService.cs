@@ -4,6 +4,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using TemperatuurLogger.Model;
 using Xtensive.Orm;
+using Xtensive.Orm.Rse;
 
 namespace TemperatuurLogger.Services
 {
@@ -42,8 +43,11 @@ namespace TemperatuurLogger.Services
             to = to.Date.AddDays(1.0d);
 
             var downloads = Query.All<MeasurementDownload>()
-                .Where(dl => (dl.EndTime >= from && dl.EndTime < to) ||
-                             (dl.StartTime >= from && dl.StartTime < to))
+                //.Where(dl => (dl.EndTime >= from && dl.EndTime < to) ||
+                //             (dl.StartTime >= from && dl.StartTime < to))
+                .Where(dl => dl.Logger == logger &&
+                             ((from >= dl.StartTime && from < dl.EndTime) ||
+                             (to >= dl.StartTime && to < dl.EndTime)))
                 .OrderBy(dl => dl.StartTime)
                 .ToList();
 
@@ -58,30 +62,33 @@ namespace TemperatuurLogger.Services
 
             foreach (var download in downloads)
             {
-                
-                    var data = Query.All<Measurement>()
-                      .Where(m => m.Download == download && m.Timestamp >= from && m.Timestamp < to);
-                    foreach(var d in data)
+                var data = Query.All<Measurement>()
+                  .Where(m => m.Download == download && m.Timestamp >= from && m.Timestamp < to);
+                foreach (var d in data)
+                {
+                    if (d.Timestamp > endOfDay)
                     {
-                        if(d.Timestamp>endOfDay)
-                        {
-                            var avg = sum / cnt;
-                            results.Add(new LoggerReportData(startOfDay, avg));
-                            sum = 0M;
-                            cnt = 0;
-                            startOfDay=endOfDay;
-                            endOfDay=startOfDay.AddDays(1d);
-                        }
-                        cnt++;
-                        sum += d.Temperature;
+                        var avg = cnt > 0 ? sum / cnt : 0M;
+                        results.Add(new LoggerReportData(startOfDay, avg));
+                        sum = 0M;
+                        cnt = 0;
+                        startOfDay = endOfDay;
+                        endOfDay = startOfDay.AddDays(1d);
                     }
+                    cnt++;
+                    sum += d.Temperature;
+                }
+                {
+                    var avg = cnt > 0 ? sum / cnt : 0M;
+                    results.Add(new LoggerReportData(startOfDay, avg));
+                }
             }
             return results.ToArray();
         }
-        const string DateFormat = "dd\\/MM\\/yyyy";
+        const string DateFormat = "dd-MM-yyyy";
         public (string directory, string filename) GetReportFileName(string directory, string filename, LoggerReportModel report)
         {
-            
+
             if (string.IsNullOrWhiteSpace(directory))
                 directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                     "Temperaturen");
@@ -91,55 +98,133 @@ namespace TemperatuurLogger.Services
                 var to = report.To.ToString(DateFormat);
                 filename = from != to ? $"{from} t.e.m. {to}.pdf" : $"{from}.pdf";
             }
-            return (directory,filename);
+            return (directory, filename);
+        }
+
+        private string EnsureFileDoesNotExist(string directory, string filename)
+        {
+            var fullFileName = Path.Combine(directory, filename);
+
+            if (!File.Exists(fullFileName))
+                return filename;
+
+            var fn = Path.GetFileNameWithoutExtension(filename);
+            var ext = Path.GetExtension(filename);
+            int seq = 1;
+            do
+            {
+                filename = $"{fn} ({seq++}.{ext}";
+                fullFileName = Path.Combine(directory, filename);
+            } while ((File.Exists(fullFileName)));
+            return filename;
         }
 
         public void GeneratePdfReport(string directory, string filename, LoggerReportModel report)
         {
-            var df = GetReportFileName(directory,filename,report);
-            directory=df.directory;
+            filename = EnsureFileDoesNotExist(directory, filename);
+
+            var df = GetReportFileName(directory, filename, report);
+            directory = df.directory;
             filename = df.filename;
 
             var from = report.From.ToString(DateFormat);
             var to = report.To.ToString(DateFormat);
-            var title = $"Temparaturen {report.Name} {from}{(from != to ? "-" + to : "")}";
-            
+            var title = $"Apotheek Sigrid Saelens BV - Temperaturen {report.Name}";
+            var subtitle = $"{from}{(from != to ? " t.e.m." + to : "")}";
+
+            int offset = 0;
+            var elements = report.Data.
+                Select(d => $"{d.Date.ToString("dd-MM-yyyy")}    {d.Temperature.ToString("F1")} °C")
+                .ToList();
+
             QuestPDF.Settings.License = LicenseType.Community;
+
+            const int take = 80;
+            const int takehalf = 40;
 
             Document
                 .Create(container =>
-                {
-                    container.Page(page =>
                     {
-                        page.Size(PageSizes.A4);
-                        page.Margin(2, Unit.Centimetre);
-                        page.PageColor(Colors.White);
-                        page.DefaultTextStyle(x => x.FontSize(20));
+                        while (elements.Any())
+                        {
+                            var pageElements = elements.Take(take).ToList();
+                            elements = elements.Skip(take).ToList();
 
-                        page.Header()
-                            .Text($"Temperaturen {report.Name} {report.From}")
-                            .SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
-
-                        page.Content()
-                            .PaddingVertical(1, Unit.Centimetre)
-                            .Column(x =>
+                            container.Page(page =>
                             {
-                                x.Spacing(20);
+                                page.Size(PageSizes.A4);
+                                page.Margin(2, Unit.Centimetre);
+                                page.PageColor(Colors.White);
+                                page.DefaultTextStyle(x => x.FontSize(20));
 
-                                x.Item().Text(string.Join("\n",report.Data.Select(d => $"{d.Date.ToString("dd\\/MM\\/yyyy")}  {d.Temperature}")));
-                                //x.Item().Image(Placeholders.Image(200, 100));
-                            });
+                                page.Header()
+                                    .Text(td =>
+                                    {
+                                        td.Line(title).SemiBold().FontSize(18).FontColor(Colors.Blue.Medium);
+                                    });
 
-                        page.Footer()
-                            .AlignCenter()
-                            .Text(x =>
-                            {
-                                x.Span("Page ");
-                                x.CurrentPageNumber();
+                                page.Content().Element(container =>
+                                {
+                                    container.Row(row =>
+                                    {
+
+                                        row.RelativeItem().Column(stack =>
+                                        {
+                                            pageElements
+                                                .Take(takehalf)
+                                                .ToList()
+                                                .ForEach(x =>
+                                                    stack.Item()
+                                                        .Text(x)
+                                                        .FontFamily("Calibri")
+                                                        .FontSize(10));
+                                        });
+
+
+                                        row.RelativeItem()
+                                        .BorderLeft(1f)
+                                        .Column(stack =>
+                                        {
+                                            pageElements
+                                                .Skip(takehalf)
+                                                .ToList()
+                                                .ForEach(x =>
+                                                    stack.Item()
+                                                        .PaddingLeft(10f)
+                                                        .Text(x)
+                                                        .FontFamily("Calibri")
+                                                        .FontSize(10));
+                                        });
+                                    });
+                                });
+
+                                page.Footer()
+                                .BorderTop(1f, Unit.Point)
+                                .Element(container =>
+                                {
+                                    container.Row(row =>
+                                    {
+                                        row.RelativeItem().Column(column =>
+                                        {
+                                            column.Item()
+                                            .AlignLeft()
+                                            .Text(subtitle)
+                                            .FontSize(12);
+                                        });
+
+                                        row.RelativeItem().Column(column =>
+                                        {
+                                            column.Item()
+                                            .AlignRight()
+                                            .Text(x => x.CurrentPageNumber().FontSize(12));
+                                        });
+                                    });
+                                });
+
                             });
-                    });
-                })
-                .GeneratePdf(Path.Combine(directory,filename));
+                        }
+                    })
+                    .GeneratePdf(Path.Combine(directory, filename));
         }
 
 

@@ -3,11 +3,20 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TemperatuurLogger.UI.Views.ReportSteps.Step1CriteriaEntry">
+             x:Class="TemperatuurLogger.UI.Views.ReportSteps.Step1CriteriaEntry"
+			 xmlns:vm="using:TemperatuurLogger.UI.ViewModels">
+
+	<Design.DataContext>
+		<vm:ReportViewModel/>
+	</Design.DataContext>
+	
   <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="1*,1*">
+	  <StackPanel Orientation="Horizontal">
+		  <TextBlock VerticalAlignment="Center" Padding="5" Text="Metingen van :"
+					 FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Green"/>
     <ComboBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
 				  PlaceholderText="Kies een logger..."
-				  Items="{Binding Loggers}" SelectedItem="{Binding SelectedLogger}" 
+				  ItemsSource="{Binding Loggers}" SelectedItem="{Binding SelectedLogger}" 
 				 Margin="5" Width="250">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
@@ -15,24 +24,30 @@
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
 		</ComboBox>
-
+	  </StackPanel>
 	  <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="35,Auto">
-		  <TextBlock HorizontalAlignment="Center">Van</TextBlock>
+		  <TextBlock HorizontalAlignment="Left" 
+					 FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Green"
+					 Text="{Binding FromDateText}" Padding="5"/>
 		<Calendar Grid.Row="1"
 				  SelectionMode="SingleDate"
 				  DisplayDate="{Binding FromDate}"
 				  DisplayDateStart="{Binding LoggerFromDate}"
 				  DisplayDateEnd="{Binding EndDate}"
-				  SelectedDate="{Binding FromDate}" Margin="5" DisplayMode="Month" />
+				  SelectedDate="{Binding FromDate}" Margin="5" DisplayMode="Month" Foreground="Green" />		  
 	  </Grid>
 	  <Grid Grid.Row="1" Grid.Column="1" RowDefinitions="35,Auto">
-		  <TextBlock HorizontalAlignment="Center">Tot</TextBlock>
+		  <TextBlock HorizontalAlignment="Left"
+					FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Green"
+					 Text="{Binding EndDateText}" />
 		<Calendar Grid.Row="1" 
 				  DisplayDate="{Binding EndDate}"
 				  DisplayDateStart="{Binding FromDate}"
 				  DisplayDateEnd="{Binding LoggerEndDate}"
 				  SelectionMode="SingleDate" 
-				  SelectedDate="{Binding EndDate}"  Margin="5" DisplayMode="Month"/>
+				  SelectedDate="{Binding EndDate}"  Margin="5" DisplayMode="Month"
+				  Foreground="Green"
+				  />
 		  </Grid>
 </Grid>
 </UserControl>

@@ -171,7 +171,7 @@ namespace TemperatuurLogger.UI.ViewModels
 		#region step 5 stuff
 		DownloadViewModelState DoReset(UserControl p)
 		{
-			//device.ClearDataOnDevice();
+			device.ClearDataOnDevice();
 			device.SetClock();
 			State = DownloadViewModelState.Done;
 			return State;
