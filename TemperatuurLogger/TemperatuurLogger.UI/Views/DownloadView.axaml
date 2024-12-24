@@ -13,11 +13,11 @@
 		SystemDecorations="None"
 		WindowState="Maximized">
 		
-		<Grid ColumnDefinitions="3*,10*,3*" RowDefinitions="80,*,120" ShowGridLines="True">
+		<Grid ColumnDefinitions="3*,10*,3*" RowDefinitions="60,*,250" ShowGridLines="True">
 			
 			<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontFamily="Comic Sans MS" Foreground="Green" FontSize="36" HorizontalAlignment="Center">DOWNLOADEN TEMPERATUREN</TextBlock>
 			
-			<Carousel x:Name="carousel" Grid.Row="1" Grid.Column="1" Name="carousel" Margin="5" >
+			<Carousel x:Name="carousel" Grid.Row="1" Background="AliceBlue" Grid.Column="1" Name="carousel" Margin="5" >
 				<steps:Step1Detect />
 				<steps:Step2ShowInfo DataContext="{Binding DeviceDetailsInfo}" />
 				<steps:Step3Download/>
