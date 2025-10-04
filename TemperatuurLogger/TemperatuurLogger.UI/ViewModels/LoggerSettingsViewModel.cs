@@ -12,10 +12,29 @@ namespace TemperatuurLogger.UI.ViewModels
 {
 	public class LoggerSettingsViewModel : ViewModelBase
 	{
+		public class LoggerData
+		{	
+			public string Serial {  get; set; }
+			public string Name { get; set; }
+			public string PurchaseDate {  get;set; }
+			public string LastDownloadDate { get; set; }
+			public string LastBatteryRefreshDate { get; set; }
+
+		}
+
+		public LoggerData[] Loggers => new[]
+			{
+			new LoggerData{Serial="123", Name="logger 1", PurchaseDate="01/01/2020", LastDownloadDate="31/12/2024", LastBatteryRefreshDate="01/01/2025 "},
+            new LoggerData{Serial="123", Name="logger 1", PurchaseDate="01/01/2020", LastDownloadDate="31/12/2024", LastBatteryRefreshDate="01/01/2025 "},
+            new LoggerData{Serial="123", Name="logger 1", PurchaseDate="01/01/2020", LastDownloadDate="31/12/2024", LastBatteryRefreshDate="01/01/2025 "},
+            new LoggerData{Serial="123", Name="logger 1", PurchaseDate="01/01/2020", LastDownloadDate="31/12/2024", LastBatteryRefreshDate="01/01/2025 "},
+			};
+
+
 		#region bindable stuff
 		public string Name { get; set; } = "APOTHEEK SAELENS";
 
-		public int SamplingInterval { get; set; } = 180;
+		public int SamplingInterval { get; set; } = 900;
 
 		public int LoggingInterval { get; set; } = 900;
 
@@ -40,8 +59,8 @@ namespace TemperatuurLogger.UI.ViewModels
 			//TODO 0 JS IMPLEMENT SETTING PROPERTIES
 			//  WE'll HARDCODE
 			//			15 min logging interval
-			//			3  min sampling interval
-			//			15 start delay; start mode always "delay"
+			//			15 min sampling interval
+			//			15 min start delay; start mode always "delay"
 			//			alarms are less important....	
 		}
 
@@ -55,7 +74,6 @@ namespace TemperatuurLogger.UI.ViewModels
 		{
 			Send = ReactiveCommand.Create(SendCommand);
 			Close = ReactiveCommand.Create<ICanClose,Unit>(CloseCommand);
-
 		}
 	}
 }

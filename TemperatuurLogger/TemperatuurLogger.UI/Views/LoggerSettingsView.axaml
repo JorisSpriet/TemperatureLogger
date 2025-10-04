@@ -10,7 +10,30 @@
 		<vm:LoggerSettingsViewModel />
 		
 	</Design.DataContext>
-	<Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,Auto,Auto,Auto,100">
+	<TabControl>
+		<TabItem Header="Overzicht loggers">
+			<Grid RowDefinitions="Auto,100">
+				<DataGrid Margin="20" ItemsSource="{Binding Loggers}"
+          IsReadOnly="True"
+          GridLinesVisibility="All"
+          BorderThickness="1" BorderBrush="Gray">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Serienummer" Width="*"
+								Binding="{Binding Serial}"/>
+						<DataGridTextColumn Header="Naam" Width="*"
+								Binding="{Binding Name}" />
+						<DataGridTextColumn Header="Aankoop" Width="*"
+								Binding="{Binding PurchaseDate}" />
+						<DataGridTextColumn Header="Download" Width="*"
+								Binding="{Binding LastDownloadDate}" />
+						<DataGridTextColumn Header="Batterij" Width="*"
+								Binding="{Binding LastBatteryRefreshDate}" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</Grid>
+		</TabItem>
+		<TabItem Header="Logger instellen">
+	<Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,Auto,Auto,Auto,100" DataContext="{Binding LoggerSetup}">
 		<Label Grid.Row="0" Grid.Column="0"
 			Content="Omschrijving" />
 		<Label Grid.Row="1" Grid.Column="0"
@@ -29,4 +52,6 @@
 		</StackPanel>
 		<Panel Grid.Row="4" Grid.ColumnSpan="2" Background="DarkGray" Height="35" /> 
 	</Grid>
+		</TabItem>
+	</TabControl>
 </Window>

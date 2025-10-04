@@ -3,8 +3,6 @@ using Xtensive.Orm;
 
 namespace TemperatuurLogger.Model
 {
-    using TemperatuurLogger.Model;
-
     [HierarchyRoot]
     public class Measurement : BaseObject
     {

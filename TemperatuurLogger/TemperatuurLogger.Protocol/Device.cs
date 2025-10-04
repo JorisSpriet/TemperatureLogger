@@ -15,7 +15,7 @@ namespace TemperatuurLogger.Protocol
     {
         private static ILog logger = LogManager.GetLogger("DEVICE");
 
-        private readonly SerialPort serialPort;
+        private readonly DeviceComPortDetails portDetails;
 
         private int serialFrameSize;
 
@@ -25,26 +25,20 @@ namespace TemperatuurLogger.Protocol
 
         public string SerialNumber { get; private set; }
 
-        private void WithSerialPort(Action action)
-		{
-            logger.Debug($"Opening port {serialPort.PortName}..");
-            serialPort.Open();
-            logger.Debug($"Serial port {serialPort.PortName} opened.");
+        private void WithSerialPort(Action<SerialPort> action)
+        {
+            logger.Debug($"Getting serial port {portDetails.PortName}..");
+            var serialPort = portDetails.GetSerialPort();
 
-            try {
-                action();
-            }
-            finally {
-                serialPort.Close();
-            }
-		}
+            action(serialPort);
+        }
 
-        private void GetInfoDetails1(DeviceDetails result)
+        private void GetInfoDetails1(SerialPort serialPort, DeviceDetails result)
         {
             logger.Debug($"Sending command 'get info (1)'");
 
             var question = Messages.GetDataInfo1Message(SerialNumber, x);
-            var details1 = Get<AnswerGetInfoDetails1Message>(question);
+            var details1 = Get<AnswerGetInfoDetails1Message>(serialPort, question);
 
             if (!details1.IsValid())
                 throw new Exception("Received invalid details from device.");
@@ -58,11 +52,11 @@ namespace TemperatuurLogger.Protocol
             result.DelayTime = details1.DelayTime;
         }
 
-        private void GetInfoDetails2(DeviceDetails result)
+        private void GetInfoDetails2(SerialPort serialPort, DeviceDetails result)
         {
             logger.Debug($"Sending command 'get info (2)'");
             var question = Messages.GetDataInfo2Message(SerialNumber, x);
-            var details2 = Get<AnswerGetInfoDetails2Message>(question);
+            var details2 = Get<AnswerGetInfoDetails2Message>(serialPort, question);
 
             result.SampleInterval = details2.SampleInterval;
         }
@@ -70,10 +64,10 @@ namespace TemperatuurLogger.Protocol
         public DeviceDetails GetDetailsFromDevice()
         {
             var result = new DeviceDetails();
-            WithSerialPort(() =>
+            WithSerialPort((serialPort) =>
             {
-                GetInfoDetails1(result);
-                GetInfoDetails2(result);
+                GetInfoDetails1(serialPort, result);
+                GetInfoDetails2(serialPort, result);
 
                 if (SerialNumber != result.SerialNumber)
                     throw new Exception("Received invalid details from device : different serial number");
@@ -81,22 +75,24 @@ namespace TemperatuurLogger.Protocol
             return result;
         }
 
-        T Get<T>(byte[] question = null)
+        T Get<T>(SerialPort serialPort, byte[] question = null)
         {
-            SendQuestion(question);
+            SendQuestion(serialPort, question);
 
             var buffer = new byte[Marshal.SizeOf<T>()];
             var offset = 0;
             var noDataCounter = 0;
 
             sw.Restart();
-            while (offset < buffer.Length || noDataCounter > 1000) {
+            while (offset < buffer.Length || noDataCounter > 1000)
+            {
                 //TODO 1 JS PROTECT AGAINST ENDLESS LOOP
                 var bytecount = buffer.Length - offset;
                 int r = serialPort.BaseStream.Read(buffer, offset, bytecount);
                 offset += r;
                 logger.Debug($"\treceived {r} bytes ({offset} of {buffer.Length})");
-                if (r == 0) {
+                if (r == 0)
+                {
                     Thread.Sleep(5);
                     noDataCounter++;
                 }
@@ -110,9 +106,9 @@ namespace TemperatuurLogger.Protocol
             return result;
         }
 
-        private void GetData(DataMessageSample[] data, SamplesReadingCallback callback)
+        private void GetData(SerialPort serialPort, DataMessageSample[] data, SamplesReadingCallback callback)
         {
-            
+
             var messageCount = data.Length / 15;
             var totalBytes = messageCount * Marshal.SizeOf<DataMessage>();
             var rest = data.Length % 15;
@@ -126,37 +122,43 @@ namespace TemperatuurLogger.Protocol
             var buffer = new byte[Marshal.SizeOf<DataMessage>() * messageCount];
             var offset = 0;
 
-            var estimatedTransferTime = Convert.ToInt64(totalBytes * serialFrameSize * 1000) / serialPort.BaudRate;
+            var estimatedTransferTime = Convert.ToInt64(totalBytes * serialFrameSize * 1000) / portDetails.BaudRate;
             logger.Info($"Data : {totalBytes} estimated transfer time {estimatedTransferTime} ms");
 
             var question = Messages.GetDataMessage(SerialNumber);
-            SendQuestion(question);
-            
+            SendQuestion(serialPort, question);
+
             sw.Restart();
             while (offset < totalBytes)
             {
                 //TODO 1 JS PROTECT AGAINST ENDLESS LOOP                
                 var bytecount = buffer.Length - offset;
+                if (serialPort.BytesToRead < 1)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
                 int r = serialPort.BaseStream.Read(buffer, offset, bytecount);
                 offset += r;
                 decimal progress = Convert.ToDecimal(offset * 100 / buffer.Length);
-                if(r>0)
-                    logger.Debug($"\treceived {r} bytes ({offset} of {buffer.Length}) ({ progress:##0.##}%)");
+                if (r > 0)
+                    logger.Debug($"\treceived {r} bytes ({offset} of {buffer.Length}) ({progress:##0.##}%)");
                 if (r == 0)
                     Thread.Sleep(1);
                 DoCallback(offset, totalBytes, callback);
             }
-            sw.Start();
+            sw.Stop();
             logger.Info($"Received a total of {offset} bytes in {sw.Elapsed}");
-            if(rest>0) {
+            if (rest > 0)
+            {
                 var dmts = Marshal.SizeOf<DataMessageTail>();
                 var targetIndex = buffer.Length - Marshal.SizeOf<DataMessageTail>();
-                var srcIndex = targetIndex- (15 - rest) * Marshal.SizeOf<DataMessageSample>();
+                var srcIndex = targetIndex - (15 - rest) * Marshal.SizeOf<DataMessageSample>();
                 Array.Copy(buffer, srcIndex, buffer, targetIndex, dmts);
             }
 
-            
-            
+
+
             var dataMessages = Utils.MapArray<DataMessage>(buffer);
             var c = 0;
             for (int i = 0; i < dataMessages.Length; i++)
@@ -169,27 +171,34 @@ namespace TemperatuurLogger.Protocol
             }
         }
 
-		public void SetClock()
-		{
-            WithSerialPort(() =>
+        public void SetClock()
+        {
+            WithSerialPort((serialPort) =>
             {
                 var message = Messages.GetSetClockMessage(SerialNumber, x);
-                Get<AnswerSetClockMessage>(message);
+                Get<AnswerSetClockMessage>(serialPort, message);
             });
-		}
+        }
 
-		private void DoCallback(int offset, int totalBytes, SamplesReadingCallback callback)
-		{
-            var p = Convert.ToInt32(offset * 100.0 / totalBytes);
-            callback(p, offset, totalBytes);
-		}
-
-		private void SendQuestion(byte[] question = null)
+        private void DoCallback(int offset, int totalBytes, SamplesReadingCallback callback)
         {
+            var p = Convert.ToInt32(offset * 100.0 / totalBytes);
+            callback?.Invoke(p, offset, totalBytes);
+        }
+
+        private void SendQuestion(SerialPort port, byte[] question = null)
+        {
+
+            if (port.BytesToRead > 0)
+            {
+                var buffer = new byte[port.BytesToRead];
+                port.Read(buffer, 0, buffer.Length);
+                logger.Warn("There were bytes to read.... ?");
+            }
             if (question?.Length > 0)
             {
-                serialPort.Write(question, 0, question.Length);
-                Thread.Sleep(450);
+                port.Write(question, 0, question.Length);
+                Thread.Sleep(500);
             }
         }
         public async Task<DeviceSample[]> GetSamplesFromDevice(SamplesReadingCallback samplesReadingCallback)
@@ -197,16 +206,18 @@ namespace TemperatuurLogger.Protocol
             var result = new List<DeviceSample>();
             await Task.Run(() =>
             {
-                WithSerialPort(() =>
+
+                WithSerialPort((serialPort) =>
                 {
                     var details = new DeviceDetails();
-                    GetInfoDetails1(details);
+                    GetInfoDetails1(serialPort, details);
 
                     var data = new DataMessageSample[details.NumberOfSamples];
-                    GetData(data, samplesReadingCallback);
+                    GetData(serialPort, data, samplesReadingCallback);
 
                     int sampleNumber = 1;
-                    foreach (var sample in data) {
+                    foreach (var sample in data)
+                    {
                         result.Add(new DeviceSample
                         {
                             ID = sampleNumber++,
@@ -225,10 +236,10 @@ namespace TemperatuurLogger.Protocol
 
         public void ClearDataOnDevice()
         {
-            WithSerialPort(() =>
+            WithSerialPort((serialPort) =>
             {
                 // Get<AnswerClearDataMessage>(Messages.GetClearDataMessage(SerialNumber, x));
-                SendQuestion(Messages.GetClearDataMessage(SerialNumber, x));
+                SendQuestion(serialPort, Messages.GetClearDataMessage(SerialNumber, x));
                 //we probably should check the answer...
             });
         }
@@ -248,7 +259,6 @@ namespace TemperatuurLogger.Protocol
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 // TODO: set large fields to null.
-                serialPort.Dispose();
 
                 disposedValue = true;
             }
@@ -269,14 +279,13 @@ namespace TemperatuurLogger.Protocol
             // GC.SuppressFinalize(this);
         }
 
-
         #endregion
 
-        public Device(string serialNumber, SerialPort port)
+        public Device(string serialNumber, DeviceComPortDetails portDetails)
         {
             SerialNumber = serialNumber;
-            serialPort = port;
-            serialFrameSize = port.DataBits + (int)port.StopBits + ((int)port.Parity > 0 ? 1 : 0);
+            this.portDetails = portDetails;
+            serialFrameSize = portDetails.DataBits + (int)portDetails.StopBits + ((int)portDetails.Parity > 0 ? 1 : 0);
 
             x = serialNumber.StartsWith("HE");
         }

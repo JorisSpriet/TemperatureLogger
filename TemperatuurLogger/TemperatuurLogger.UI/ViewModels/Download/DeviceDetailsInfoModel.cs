@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using System;
+using ReactiveUI;
 using System.Linq;
 using System.Reactive;
 using TemperatuurLogger.Model;
@@ -7,82 +8,84 @@ using Xtensive.Orm;
 
 namespace TemperatuurLogger.UI.ViewModels
 {
-	public class DeviceDetailsInfoModel : DatabaseBoundViewModelBase
-	{
-		string loggerName = "onbekend";
-		string lastDownload = "onbekend";
-		DeviceDetails details;
-		
-		public ReactiveCommand<Unit,Unit> CreateLogger { get; private set; }
+    public class DeviceDetailsInfoModel : ViewModelBase
+    {
+        string loggerName = "onbekend";
+        string lastDownload = "onbekend";
+        bool loggerIsKnown;
+        DeviceDetails details;
 
-		public bool LoggerIsKnown { get; set; }
+        public ReactiveCommand<Unit, Unit> CreateLogger { get; private set; }
 
-		public string LoggerName {
-			get => loggerName;
-			set => this.RaiseAndSetIfChanged(ref loggerName, value);
-		}
+        public bool LoggerIsKnown
+        {
+            get => loggerIsKnown;
+            set => this.RaiseAndSetIfChanged(ref loggerIsKnown, value);
+        }
 
-		public string SerialNumber => details.SerialNumber;
-		public int NumberOfLogs => details.NumberOfSamples;
+        public string LoggerName
+        {
+            get => loggerName;
+            set => this.RaiseAndSetIfChanged(ref loggerName, value);
+        }
 
-		public string LastDownload
-		{
-			get => lastDownload;
-			set => this.RaiseAndSetIfChanged(ref lastDownload, value);
-		}
+        public string SerialNumber => details.SerialNumber;
+        public int NumberOfLogs => details.NumberOfSamples;
 
-		private void RetrieveInfoOnLogger()
-		{
-			ExecuteTransactionally(() =>
-			{
-				var l = Query.All<Logger>().SingleOrDefault(x => x.SerialNumber == details.SerialNumber);
+        public string LastDownload
+        {
+            get => lastDownload;
+            set => this.RaiseAndSetIfChanged(ref lastDownload, value);
+        }
 
-				LoggerIsKnown = l != null;
+        private void RetrieveInfoOnLogger()
+        {
+            DeviceService.With(() =>
+            {
+                var l = DeviceService.Instance.GetLogger(details.SerialNumber);
 
-				if (!LoggerIsKnown) return;
+                LoggerIsKnown = l != null;
 
-				LoggerName = l.Name;
+                if (!LoggerIsKnown) return;
 
-				var last = Query.All<MeasurementDownload>()
-					.Where(x => x.Logger == l)
-					.OrderByDescending(x => x.DownloadTime)
-					.FirstOrDefault();
-				LastDownload = last?.DownloadTime.ToString("dd/MM/yyyy") ?? "onbekend";
-			}
-			);
-		}
+                LoggerName = l.Name;
+                LastDownload = l.LastDownloadTime?.ToString("dd/MM/yyyy") ?? "onbekend";
 
-		private Unit DoCreateLogger(Unit arg)
-		{
-			ExecuteTransactionally(() =>
-				{
-					var logger = new Logger(SerialNumber, LoggerName);
-					LoggerIsKnown = true;
-				}
-			);
+            });
+        }
 
-			return Unit.Default;
-		}
+        private Unit DoCreateLogger(Unit arg)
+        {
+            DeviceService.With(() =>
+                {
+                    //TODO MOVE CREATION OF LOGGER TO MANAGEMENT PAGE
+                    var logger = DeviceService.Instance.CreateLogger(SerialNumber, LoggerName, DateTime.Now);
+                    LoggerIsKnown = true;
+                }
+            );
 
-
-		void InitCommands()
-		{
-			//var can
-			var canCreateLogger = this.WhenAnyValue(vm => vm.LoggerIsKnown, x => !x);
-			CreateLogger = ReactiveCommand.Create<Unit, Unit>(DoCreateLogger, canCreateLogger);
-
-		}
+            return Unit.Default;
+        }
 
 
-		public DeviceDetailsInfoModel(DeviceDetails details)
-		{
-			this.details = details;
+        void InitCommands()
+        {
+            //var can
+            var canCreateLogger = this.WhenAnyValue(vm => vm.LoggerIsKnown, x => !x);
+            CreateLogger = ReactiveCommand.Create<Unit, Unit>(DoCreateLogger, canCreateLogger);
 
-			InitCommands();
+        }
 
-			RetrieveInfoOnLogger();
-		}
 
-		
-	}
+        public DeviceDetailsInfoModel(DeviceDetails details)
+        {
+            this.details = details;
+
+            InitCommands();
+
+            RetrieveInfoOnLogger();
+        }
+
+
+    }
 }

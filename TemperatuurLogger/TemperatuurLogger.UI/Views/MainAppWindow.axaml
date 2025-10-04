@@ -58,7 +58,9 @@
 		<Grid Grid.Row="2" Grid.Column="1" RowDefinitions="*,Auto,Auto" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 			<TextBlock Grid.Row="1">Instellingen</TextBlock>
 			<Border Grid.Row="2" BorderThickness="2" CornerRadius="10" BorderBrush="Black" Margin="5">
-				<Button Background="Transparent">
+				<Button Background="Transparent"
+							 Command="{Binding SettingsCommand}"
+							 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
 					<Panel Width="50" Height="50">
 						<Image Source="/Assets/settings.png" Height="50" />
 					</Panel>					

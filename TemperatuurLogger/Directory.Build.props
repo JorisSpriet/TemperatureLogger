@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+	<PropertyGroup>
+		<OutDir>$(SolutionDir)\Binaries\</OutDir>
+		<OutputPath>$(SolutionDir)\Binaries\</OutputPath>
+		<!--This make possible code debugging with package with embedded source code-->
+		<EmbedAllSources>true</EmbedAllSources>
+		<DebugType>portable</DebugType>
+	</PropertyGroup>
+
+</Project>

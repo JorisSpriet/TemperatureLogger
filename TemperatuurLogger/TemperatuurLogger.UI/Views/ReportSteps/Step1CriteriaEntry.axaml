@@ -9,45 +9,34 @@
 	<Design.DataContext>
 		<vm:ReportViewModel/>
 	</Design.DataContext>
-	
-  <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="1*,1*">
-	  <StackPanel Orientation="Horizontal">
-		  <TextBlock VerticalAlignment="Center" Padding="5" Text="Metingen van :"
-					 FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Green"/>
-    <ComboBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-				  PlaceholderText="Kies een logger..."
-				  ItemsSource="{Binding Loggers}" SelectedItem="{Binding SelectedLogger}" 
-				 Margin="5" Width="250">
-			<ComboBox.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Name}"/>
-				</DataTemplate>
-			</ComboBox.ItemTemplate>
-		</ComboBox>
-	  </StackPanel>
-	  <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="35,Auto">
-		  <TextBlock HorizontalAlignment="Left" 
-					 FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Green"
-					 Text="{Binding FromDateText}" Padding="5"/>
-		<Calendar Grid.Row="1"
-				  SelectionMode="SingleDate"
-				  DisplayDate="{Binding FromDate}"
-				  DisplayDateStart="{Binding LoggerFromDate}"
-				  DisplayDateEnd="{Binding EndDate}"
-				  SelectedDate="{Binding FromDate}" Margin="5" DisplayMode="Month" Foreground="Green" />		  
-	  </Grid>
-	  <Grid Grid.Row="1" Grid.Column="1" RowDefinitions="35,Auto">
-		  <TextBlock HorizontalAlignment="Left"
-					FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Green"
-					 Text="{Binding EndDateText}" />
-		<Calendar Grid.Row="1" 
-				  DisplayDate="{Binding EndDate}"
-				  DisplayDateStart="{Binding FromDate}"
-				  DisplayDateEnd="{Binding LoggerEndDate}"
-				  SelectionMode="SingleDate" 
-				  SelectedDate="{Binding EndDate}"  Margin="5" DisplayMode="Month"
-				  Foreground="Green"
-				  />
-		  </Grid>
-</Grid>
+
+	<Grid RowDefinitions="Auto,Auto,Auto,Auto,*" ColumnDefinitions="4*,1*" ShowGridLines="True">
+		<Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="Auto,Auto" Margin="10">
+			<TextBox>Jaar:</TextBox>
+			<NumericUpDown FormatString="0000" Minimum="2014" Grid.Column="1" Value="{Binding ReportYear}"></NumericUpDown>
+		</Grid>
+		<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
+			<TextBlock VerticalAlignment="Center" Padding="5" Text="Metingen van :"
+					   FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Green"/>
+			<ComboBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+						  PlaceholderText="Kies een logger..."
+						  ItemsSource="{Binding Loggers}" SelectedItem="{Binding SelectedLogger}"
+						 Margin="5" Width="250">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+		</StackPanel>
+		<TextBox Grid.Row="2" Text="{Binding AvailableDataText}" />
+		<Grid Grid.Row="3" RowDefinitions="Auto,Auto" ColumnDefinitions="1*,1*" >
+			<TextBox Margin="0 0 5 5">Van:</TextBox>
+			<TextBox Grid.Column="1" Margin="5 0 0 5">Tot:</TextBox>
+			<DatePicker Grid.Row="1" SelectedDate="{Binding FromDate}" HorizontalAlignment="Center"
+				MonthVisible="True" DayVisible="True" MonthFormat="MMMM" DayFormat="ddd dd" YearFormat="yyyy" YearVisible="False" MinYear="{Binding ReportYear}" MaxYear="{Binding ReportYear}" />
+			<DatePicker Grid.Row="1" Grid.Column="1"  Margin="5 0 0 5" SelectedDate="{Binding EndDate}" HorizontalAlignment="Center"
+				MonthVisible="True" DayVisible="True" MonthFormat="MMMM" DayFormat="ddd dd" YearFormat="yyyy" YearVisible="False" MinYear="{Binding ReportYear}" MaxYear="{Binding ReportYear}" />
+		</Grid>	
+	</Grid>
 </UserControl>

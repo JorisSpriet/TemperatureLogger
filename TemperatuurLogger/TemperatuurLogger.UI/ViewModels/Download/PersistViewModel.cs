@@ -9,7 +9,7 @@ using Xtensive.Orm;
 
 namespace TemperatuurLogger.UI.ViewModels
 {
-	class PersistViewModel : DatabaseBoundViewModelBase
+	class PersistViewModel : ViewModelBase
 	{
 		private int progressPercentage;		
 		private string persistingProgress="";
@@ -28,18 +28,23 @@ namespace TemperatuurLogger.UI.ViewModels
 
 		public void Persist(string serialNumber, DeviceSample[] samples)
 		{
-			ExecuteTransactionally(() =>
-			{
-				var logger = Query.All<Logger>().Single(x => x.SerialNumber == serialNumber);
-				var startTime = samples.Min(s => s.TimeStamp).Date;
-				var endTime = samples.Max(s => s.TimeStamp).Date;
-				var mdl = new MeasurementDownload(logger, DateTime.Now.Date, startTime, endTime);
-				var c = 1;
-				foreach(var sample in samples) {
-					new Measurement(mdl, sample.TimeStamp, sample.Temperature);
-					ShowProgress(samples.Length, c++);
-				}
-			});
+			var years = samples.Select(x => x.TimeStamp.Year).Distinct()
+				.Order()
+				.ToList();
+
+			foreach(var year in years) {
+				var relevantSamples = 
+					samples.Where(x => x.TimeStamp.Year== year)
+					.OrderBy(x=>x.TimeStamp)
+					.Select(x => (x.TimeStamp, x.Temperature))
+					.ToArray();
+
+				var y = year.ToString();
+				MeasurementService.With(y, () =>
+				{
+					MeasurementService.Instance.RegisterDownloadedData(serialNumber, relevantSamples);
+				});
+			}				
 		}
 
 		private void ShowProgress(int nOfSamples, int nOfPersistedSamples)

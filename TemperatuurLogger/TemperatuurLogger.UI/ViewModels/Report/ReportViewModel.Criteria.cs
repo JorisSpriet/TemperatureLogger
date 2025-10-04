@@ -9,84 +9,74 @@ namespace TemperatuurLogger.UI.ViewModels
 {
     public partial class ReportViewModel
     {
-		private LoggerReportSourceModel selectedLogger;
-		private DateTime fromDate;
+		private LoggerReportSource selectedLogger;
+		private DateTimeOffset fromDate;
         private DateTime loggerFromDate;
-		private DateTime endDate;
+		private DateTimeOffset endDate;
         private DateTime loggerEndDate;
 
 		public event EventHandler LoggerSelected;
 
-		public ObservableCollection<LoggerReportSourceModel> Loggers { get; } = new();
+		public ObservableCollection<LoggerReportSource> Loggers { get; } = new();
 
-        public DateTime LoggerFromDate
+        public int ReportYear
         {
-            get => loggerFromDate;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref loggerFromDate, value);
+            get => reportYear;
+            set {
+
+                if (reportYear != value) {
+                    GetLoggers(value);
+                }
+                this.RaiseAndSetIfChanged(ref reportYear, value);
             }
         }
 
-        public DateTime FromDate
+        public string AvailableDataText => GetAvailableDataText();
+
+        private string GetAvailableDataText()
+        {
+            if(SelectedLogger== null) {
+                return "Kies een jaartal, dan een logger";
+            }
+
+            return 
+                SelectedLogger.NoData ? "Geen metingen voor deze logger." :
+                $"Metingen van {SelectedLogger.From?.Date.ToString("dd\\/MM\\/yyyy")} t.e.m {SelectedLogger.To?.Date.ToString("dd\\/MM\\/yyyy")}";
+        }
+
+        public DateTimeOffset FromDate
 		{
 			get => fromDate;
-			set 
-            {
-                if(value < LoggerFromDate.Date)
-                    throw new ArgumentOutOfRangeException($"Enkel metinging vanaf {LoggerFromDate.ToString("dd\\/MM\\/yyyy")}");
-                this.RaiseAndSetIfChanged(ref fromDate, value);
-               this.RaisePropertyChanged(nameof(FromDateText));
-            }
+			set => fromDate = value;
 		}
-        public string FromDateText => $"Van :{fromDate.ToString("dd-MM-yyyy")}";
-
-        public DateTime LoggerEndDate
-        {
-            get => loggerEndDate;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref loggerEndDate, value);
-            }
-        }
-
-        public DateTime EndDate
+        
+        public DateTimeOffset EndDate
 		{
 			get => endDate;
-			set
-            {
-                if(value>LoggerEndDate)
-                    throw new ArgumentOutOfRangeException($"Enkel metingen tem {LoggerEndDate.ToString("dd\\/MM\\/yyyy")}");
-                this.RaiseAndSetIfChanged(ref endDate, value);
-                this.RaisePropertyChanged(nameof(EndDateText));
-            }
+			set => endDate = value;
 		}
 
-        public string EndDateText => $"Tot :{endDate.ToString("dd-MM-yyyy")}";
-
-		public LoggerReportSourceModel SelectedLogger
+		public LoggerReportSource SelectedLogger
 		{
 			get => selectedLogger;
 			set
 			{
 				this.RaiseAndSetIfChanged(ref selectedLogger, value);
-				LoggerFromDate = value.AvailableFrom;
-                FromDate = value.AvailableFrom;
-                LoggerEndDate = value.AvailableTo;
-                EndDate = value.AvailableTo;
 				LoggerSelected?.Invoke(this, EventArgs.Empty);
+                FromDate = selectedLogger?.From?.Date ?? new DateTime(reportYear,1,1);
+                EndDate = selectedLogger?.To?.Date ?? new DateTime(reportYear,12,31);
+                this.RaisePropertyChanged(nameof(AvailableDataText));
 			}
 		}
 
-        private void GetLoggers()
+        private void GetLoggers(int year)
         {
             var svc = new LoggerReportService();
-            ExecuteTransactionally(() =>
-                Loggers.AddRange(svc.GetAvailableData())
-            );
+            Loggers.Clear();
+            Loggers.AddRange(svc.Getloggers(year.ToString()));
+            
             if(Loggers.Count>0) { 
                 SelectedLogger = Loggers.First();
-
             }
         }
 		

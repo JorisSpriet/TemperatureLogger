@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using ReactiveUI;
+using System;
 using System.Reactive;
 using TemperatuurLogger.UI.Views;
 
@@ -13,6 +14,8 @@ namespace TemperatuurLogger.UI.ViewModels
 		public ReactiveCommand<IWindow, Unit> StartReportCommand { get; }
 
 		public ReactiveCommand<IWindow,Unit> ExitCommand { get;}
+
+		public ReactiveCommand<IWindow,Unit> SettingsCommand {  get; }
 
 		private Unit StartDownloadWizard(IWindow mwv)
 		{
@@ -36,11 +39,22 @@ namespace TemperatuurLogger.UI.ViewModels
 			return Unit.Default;
 		}
 
-		public MainWindowViewModel()
+        private Unit ShowSettings(IWindow mwv)
+        {
+            var svm = new LoggerSettingsViewModel();
+            var sv = new LoggerSettingsView();
+            sv.DataContext = svm;
+            sv.ShowDialog(mwv);
+            return Unit.Default;
+        }
+
+        public MainWindowViewModel()
 		{
 			StartDownloadWizardCommand = ReactiveCommand.Create<IWindow,Unit>(StartDownloadWizard);
 			StartReportCommand = ReactiveCommand.Create<IWindow, Unit>(StartReport);
+			SettingsCommand = ReactiveCommand.Create<IWindow, Unit>(ShowSettings);
 			ExitCommand = ReactiveCommand.Create<IWindow,Unit>(Exit);
+
 		}
 	}
 }

@@ -25,8 +25,10 @@
 
 		<Carousel x:Name="carousel" Grid.Row="1" Grid.Column="1" Name="carousel" Margin="5" >
 			<steps:Step1CriteriaEntry />
+			<!--
 			<steps:Step2ReportCreation />
 			<steps:Step3Done/>
+			-->
 		</Carousel>
 
 		<Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="3*,3*,4*,3*" RowDefinitions="*,Auto" ShowGridLines="True">
@@ -54,7 +56,6 @@
 				</Button>
 			</Border>
 		</Grid>
-
 
 	</Grid>
 </Window>

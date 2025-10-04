@@ -1,88 +1,103 @@
-﻿using Microsoft.VisualBasic;
+﻿using System.Linq;
+using System.Collections.Generic;
+using Microsoft.VisualBasic;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using TemperatuurLogger.Model;
 using Xtensive.Orm;
-using Xtensive.Orm.Rse;
 
 namespace TemperatuurLogger.Services
 {
     public class LoggerReportService
     {
-        public IEnumerable<LoggerReportSourceModel> GetAvailableData()
+        public IEnumerable<LoggerReportSource> Getloggers(string year)
         {
+            int y = int.Parse(year);
+            var result = new List<LoggerReportSource>();
 
-            foreach (var logger in Query.All<Logger>().ToArray())
+            DeviceService.With(() =>
+                result.AddRange(DeviceService.Instance.GetAllLoggers()
+                    .Select(l => new LoggerReportSource(l.Name, l.SerialNumber))));
+            var s = new DateTime(y, 1, 1, 0, 0, 0);
+            var e = new DateTime(y, 12, 31, 23, 59, 59);
+
+            MeasurementService.With(year, () =>
             {
+                foreach (var lrs in result)
+                {
+                    var dl = MeasurementService.Instance.GetDownloads(lrs.SerialNumber, s, e);
 
-                var q = Query.All<MeasurementDownload>()
-                    .Where(md => md.Logger == logger);
+                    lrs.NoData = dl.Length == 0;
+                    if (dl.Length > 0)
+                    {
+                        lrs.From = dl.OrderBy(x => x.StartTime).FirstOrDefault().StartTime;
+                        lrs.To = dl.OrderByDescending(x => x.EndTime).FirstOrDefault().EndTime;
+                    }
+                }
+            });
 
-                var from = q.OrderBy(x => x.ID).FirstOrDefault();
-                if (from == null)
-                    continue;
-                var to = q.OrderByDescending(x => x.ID).First();
-                var fromDate = from.StartTime.Date;
-                var toDate = to.EndTime.Date;
-                yield return new LoggerReportSourceModel(logger.Name, logger.SerialNumber, fromDate, toDate);
-            }
+            return result;
         }
 
-        public Logger GetTemperatureLogger(string serialnumber)
+        public TemperatureLogger GetTemperatureLogger(string serialnumber)
         {
-            return Query.All<Logger>().Single(l => l.SerialNumber == serialnumber);
+            return Query.All<TemperatureLogger>().Single(l => l.SerialNumber == serialnumber);
         }
 
         public LoggerReportData[] GetReportDataPerDay(string serialNumber, DateTime from, DateTime to)
         {
-            var logger = GetTemperatureLogger(serialNumber);
-
             //begin day to end of day.
             from = from.Date;
             to = to.Date.AddDays(1.0d);
-
-            var downloads = Query.All<MeasurementDownload>()
-                //.Where(dl => (dl.EndTime >= from && dl.EndTime < to) ||
-                //             (dl.StartTime >= from && dl.StartTime < to))
-                .Where(dl => dl.Logger == logger &&
-                             ((from >= dl.StartTime && from < dl.EndTime) ||
-                             (to >= dl.StartTime && to < dl.EndTime)))
-                .OrderBy(dl => dl.StartTime)
-                .ToList();
-
-            if (downloads.Count == 0)
-                throw new Exception("Geen temperaturen voor deze datum. Werd de logger al uitgelezen ?");
-
+            var year = from.Year.ToString();
             var results = new List<LoggerReportData>();
-            var startOfDay = from.Date;
-            var endOfDay = startOfDay.AddDays(1.0d);
-            var sum = 0M;
-            var cnt = 0;
 
-            foreach (var download in downloads)
+            MeasurementService.With(year, () =>
             {
-                var data = Query.All<Measurement>()
-                  .Where(m => m.Download == download && m.Timestamp >= from && m.Timestamp < to);
-                foreach (var d in data)
+
+                var downloads = Query.All<MeasurementDownload>()
+                    .Where(dl => dl.SerialNumber == serialNumber &&
+                                 (dl.StartTime <= to && dl.EndTime > from))
+                    .OrderBy(dl => dl.StartTime)
+                    .ToList();
+
+                if (downloads.Count == 0)
+                    throw new Exception("Geen temperaturen voor deze datums. Werd de logger al uitgelezen ?");
+
+
+                var startOfDay = from.Date;
+                var endOfDay = startOfDay.AddDays(1.0d);
+                var sum = 0M;
+                var cnt = 0;
+
+                foreach (var download in downloads)
                 {
-                    if (d.Timestamp > endOfDay)
+                    var data = Query.All<Measurement>()
+                                .Where(m => m.Download==download && m.Timestamp >= from && m.Timestamp < to)
+                                .OrderBy(m => m.Timestamp)
+                                .ToList();
+                    foreach (var d in data)
                     {
-                        var avg = cnt > 0 ? sum / cnt : 0M;
-                        results.Add(new LoggerReportData(startOfDay, avg));
-                        sum = 0M;
-                        cnt = 0;
-                        startOfDay = endOfDay;
-                        endOfDay = startOfDay.AddDays(1d);
+                        if (d.Timestamp > endOfDay)
+                        {
+                            var avg = cnt > 0 ? sum / cnt : 0M;
+                            results.Add(new LoggerReportData(startOfDay, avg));
+                            sum = 0M;
+                            cnt = 0;
+                            startOfDay = endOfDay;
+                            endOfDay = startOfDay.AddDays(1d);
+                        }
+                        cnt++;
+                        sum += d.Temperature;
                     }
-                    cnt++;
-                    sum += d.Temperature;
+                    
                 }
-                {
-                    var avg = cnt > 0 ? sum / cnt : 0M;
+                if(cnt>0) { 
+                    var avg = sum / cnt;
                     results.Add(new LoggerReportData(startOfDay, avg));
                 }
-            }
+            });
             return results.ToArray();
         }
         const string DateFormat = "dd-MM-yyyy";

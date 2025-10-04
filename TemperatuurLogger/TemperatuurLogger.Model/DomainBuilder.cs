@@ -1,44 +1,67 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Xtensive.Core;
 using Xtensive.Orm;
 using Xtensive.Orm.Configuration;
 
 namespace TemperatuurLogger.Model
 {
     public static class DomainBuilder
-    {
-        static bool built;
-        static Domain domain;
+    {        
+        static DeviceDomain deviceDomain;
+        
+        static Dictionary<string, MeasurementDomain> measurementDomains = new Dictionary<string, MeasurementDomain>();
 
-        public static Domain Domain => domain;
-
-        public static Domain BuildDomain(string dbDirectory = null, string dbFileName="Temperatuurlogger.db3", bool create = false)
+        internal static void Dispose()
         {
-            if (built)
-                return domain;
+            if(!Utils.IsTest) throw new InvalidOperationException();
+            DeviceDomain?.Domain.DisposeSafely();
+            deviceDomain = null;
+            measurementDomains.ForEach(md => md.Value.Domain.DisposeSafely());
+            measurementDomains.Clear();
+        }
 
-            var userDir = dbDirectory ?? Utils.GetUserProfilePath();
-            var dataFile = Path.Combine(userDir, dbFileName);
+        public static DeviceDomain DeviceDomain  => BuildDeviceDomain();
 
-            if(create && File.Exists(dataFile)) {
-                throw new InvalidOperationException($"Asked to create, but file '{dataFile}' exists !");
-            }
-            
-            var domainConfiguration = new DomainConfiguration($"sqlite:///{dataFile}");
-            
-            domainConfiguration.Types.Register(typeof(Logger).Assembly);
+        public static MeasurementDomain MeasurementDomain(string year) => BuildMeasurementDomain(year);
+        
+        internal static DeviceDomain BuildDeviceDomain()
+        {
+            if(deviceDomain!=null)
+                return deviceDomain;
+
+            string dbPath = Utils.GetDeviceDbPath();
+
+            var create = !File.Exists(dbPath);
+
+            var domainConfiguration = new DomainConfiguration($"sqlite:///{dbPath}");
+
+            domainConfiguration.Types.Register(typeof(TemperatureLogger));
 
             domainConfiguration.UpgradeMode = create ? DomainUpgradeMode.Recreate : DomainUpgradeMode.PerformSafely;
 
+            deviceDomain = new DeviceDomain(Domain.Build(domainConfiguration));
 
-            domain = Domain.Build(domainConfiguration);
-            
-            return domain;
+            return deviceDomain;
         }
 
-        static void UnloadDomain(Domain domain)
+        internal static MeasurementDomain BuildMeasurementDomain(string year)
         {
-            domain.Dispose();
+            if(measurementDomains.ContainsKey(year))
+                return measurementDomains[year];
+
+            string dbPath = Utils.GetMeasurementDbPath(year);
+               var create = !File.Exists(dbPath);
+            
+            var domainConfiguration = new DomainConfiguration($"sqlite:///{dbPath}");
+            domainConfiguration.Types.Register(typeof(Measurement));
+            domainConfiguration.Types.Register(typeof(MeasurementDownload));
+            domainConfiguration.UpgradeMode = create ? DomainUpgradeMode.Recreate : DomainUpgradeMode.PerformSafely;
+
+            var md = new MeasurementDomain(year,Domain.Build(domainConfiguration));
+            measurementDomains[year] = md;            
+            return md;
         }
     }
 }

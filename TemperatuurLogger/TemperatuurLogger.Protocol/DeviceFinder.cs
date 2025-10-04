@@ -17,7 +17,7 @@ namespace TemperatuurLogger.Protocol
 				var currentPlatform = Environment.OSVersion.Platform;
 				switch (currentPlatform) {
 					case PlatformID.Win32NT:
-						return "COM3";
+						return "COM4";
 					case PlatformID.Unix:
 						return "/dev/ttyUSB0";
 					default:
@@ -50,6 +50,7 @@ namespace TemperatuurLogger.Protocol
 		{
 
 			var serialPort = new SerialPort(port, 38400,Parity.None,8,StopBits.One);
+			SerialPortCache.Instance[port] = serialPort;
 			try
 			{
 				serialPort.Open();
@@ -89,7 +90,7 @@ namespace TemperatuurLogger.Protocol
 						var a = Utils.Map<AnswerGetSerialNumberMessage>(answer);
 						if (a.IsValid())
 						{
-							return new Device(a.GetSerialNumber(), serialPort);
+							return new Device(a.GetSerialNumber(), DeviceComPortDetails.FromSerialPort(serialPort));
 						}
 					}
 					catch
@@ -102,10 +103,11 @@ namespace TemperatuurLogger.Protocol
 			}
 			finally
 			{
-				serialPort?.Close();
-                serialPort?.Dispose();
+				//serialPort?.Close();
+    //            serialPort?.Dispose();
+    //            Thread.Sleep(500); //to make sure the close is fully done
             }
-
+			
 		}
 
 	}

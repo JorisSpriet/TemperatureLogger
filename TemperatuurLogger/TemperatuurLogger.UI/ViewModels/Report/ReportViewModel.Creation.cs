@@ -33,7 +33,7 @@ namespace TemperatuurLogger.UI.ViewModels
         private void ChooseDestination()
         {
 
-            var report = new LoggerReportModel(SelectedLogger.Name, SelectedLogger.SerialNumber, FromDate, EndDate, null);
+            var report = new LoggerReportModel(SelectedLogger.Name, SelectedLogger.SerialNumber, FromDate.DateTime, EndDate.DateTime, null);
             var df = new LoggerReportService().GetReportFileName(Directory, FileName, report);
             Directory = df.directory;
             FileName = df.filename;
@@ -44,13 +44,11 @@ namespace TemperatuurLogger.UI.ViewModels
         private void DoRender(UserControl p)
         {
             var svc = new LoggerReportService();
-            LoggerReportData[] data = null;
-
-            ExecuteTransactionally(() => data = svc.GetReportDataPerDay(SelectedLogger.SerialNumber, FromDate, EndDate));
+            LoggerReportData[] data = svc.GetReportDataPerDay(SelectedLogger.SerialNumber, FromDate.DateTime, EndDate.DateTime);
             var report = new LoggerReportModel(SelectedLogger.Name,
                 SelectedLogger.SerialNumber,
-                FromDate,
-                EndDate,
+                FromDate.DateTime,
+                EndDate.DateTime,
                 data);
 
             svc.GeneratePdfReport(Directory, FileName, report);

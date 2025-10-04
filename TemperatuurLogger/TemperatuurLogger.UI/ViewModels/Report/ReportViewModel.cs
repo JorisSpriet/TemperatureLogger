@@ -5,8 +5,10 @@ using Avalonia.Controls;
 
 namespace TemperatuurLogger.UI.ViewModels
 {
-    public partial class ReportViewModel : DatabaseBoundViewModelBase
+    public partial class ReportViewModel : ViewModelBase
     {
+        private int reportYear;
+
         ReportViewModelState state;
 
         public ReactiveCommand<ICanNext, Unit> Next { get; private set; }
@@ -51,7 +53,7 @@ namespace TemperatuurLogger.UI.ViewModels
         private void DoCriteriaEntry()
         {
             LoggerSelected += (s, e) => { State = ReportViewModelState.DataEntered; };
-            GetLoggers();
+            GetLoggers(reportYear);
         }
 
 
@@ -117,8 +119,13 @@ namespace TemperatuurLogger.UI.ViewModels
             return Unit.Default;
         }
 
-        public ReportViewModel()
+        public ReportViewModel():this(DateTime.Now.Year.ToString())
+        { }
+
+
+        public ReportViewModel(string year)
         {
+            reportYear=int.Parse(year);
 
             InitCommands();
 

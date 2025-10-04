@@ -7,7 +7,7 @@ namespace TemperatuurLogger.Model
     public class MeasurementDownload : BaseObject
     {
         [Field]
-        public Logger Logger { get; private set; }
+        public string SerialNumber { get; private set; }
 
         [Field]
         public DateTime DownloadTime { get; private set; }
@@ -21,9 +21,9 @@ namespace TemperatuurLogger.Model
         [Field, Association(PairTo="Download",OnOwnerRemove=OnRemoveAction.Cascade, OnTargetRemove=OnRemoveAction.Deny)]
         public EntitySet<Measurement> Measurements { get; private set; }
 
-        public MeasurementDownload(Logger logger, DateTime downloadTime, DateTime startTime, DateTime endTime)
+        public MeasurementDownload(string serialNumber, DateTime downloadTime, DateTime startTime, DateTime endTime)
         {
-            Logger = logger;
+            SerialNumber = serialNumber;
             DownloadTime = downloadTime;
             StartTime = startTime;
             EndTime = endTime;

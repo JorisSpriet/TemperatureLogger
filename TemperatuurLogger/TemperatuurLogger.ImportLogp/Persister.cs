@@ -17,7 +17,7 @@ namespace TemperatuurLogger.Model
             var logger = DemandLogger(log.Header.SerialNumber, log.Header.LoggerName);
 
             var existing = Query.All<MeasurementDownload>()
-                .Any(x => x.Logger.SerialNumber == log.Header.SerialNumber && x.StartTime.Date == firstItem.TimeStamp().Date);
+                .Any(x => x.SerialNumber.SerialNumber == log.Header.SerialNumber && x.StartTime.Date == firstItem.TimeStamp().Date);
             if(existing) {
                 throw new InvalidOperationException($"Data for logger {log.Header.SerialNumber} already imported for {firstItem.TimeStamp().Date}");
             }
@@ -32,11 +32,11 @@ namespace TemperatuurLogger.Model
             }
         }
 
-        private Logger DemandLogger(string serialNumber, string name)
+        private TemperatureLogger DemandLogger(string serialNumber, string name)
         {
-            var result = Query.All<Logger>()
+            var result = Query.All<TemperatureLogger>()
                 .Where(x => x.SerialNumber == serialNumber).SingleOrDefault();
-            return result ?? new Logger(serialNumber, name);
+            return result ?? new TemperatureLogger(serialNumber, name);
         }
 
     }
